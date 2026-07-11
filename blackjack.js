@@ -448,19 +448,63 @@
       root.appendChild(confettiCanvas);
       this.el.confettiCanvas = confettiCanvas;
 
-      root.appendChild(this._buildHeader());
-      root.appendChild(this._buildTable());
+      // Everything that makes up "the game" — header, table, message
+      // banner, chip tray, buttons, footer — lives inside ONE fixed-size
+      // frame. Instead of each piece reflowing/hiding independently at
+      // different breakpoints (which read as separate floating windows),
+      // the whole frame is scaled up or down as a single unit to fit
+      // whatever viewport it's shown in. See _fitFrame().
+      const frame = this._div('bj-frame');
+      root.appendChild(frame);
+      this.el.frame = frame;
+
+      // Winnings/bankroll/stats sit in a sidebar beside the table rather
+      // than a wide row above it — that keeps the main column narrower
+      // and lets the table (and therefore the cards) be taller.
+      const sidebar = this._div('bj-sidebar');
+      sidebar.appendChild(this._buildStatsSidebar());
+      frame.appendChild(sidebar);
+
+      const main = this._div('bj-main');
+      frame.appendChild(main);
+
+      main.appendChild(this._buildHeader());
+      main.appendChild(this._buildTable());
 
       const banner = this._div('bj-message-banner');
-      root.appendChild(banner);
+      main.appendChild(banner);
       this.el.messageBanner = banner;
 
-      root.appendChild(this._buildBottomBar());
-      root.appendChild(this._buildInsuranceModal());
+      main.appendChild(this._buildBottomBar());
 
       const footer = this._div('bj-footer');
-      footer.textContent = 'BLACKJACK \u2014 NORWAY EDITION \u00B7 4-deck shoe \u00B7 dealer stands on hard 17, hits soft 17 \u00B7 for entertainment purposes only';
-      root.appendChild(footer);
+      footer.textContent = 'BLACKJACK \u2014 NORWAY EDITION \u00B7 4-deck shoe \u00B7 dealer stands on hard 17, hits soft 17';
+      main.appendChild(footer);
+
+      // The insurance modal is a full-viewport overlay, so it stays
+      // outside the scaled frame — its text should never shrink.
+      root.appendChild(this._buildInsuranceModal());
+
+      this._fitFrame();
+      window.addEventListener('resize', () => this._fitFrame());
+      window.addEventListener('orientationchange', () => setTimeout(() => this._fitFrame(), 60));
+    }
+
+    /* Scale the fixed-size .bj-frame to fit whatever viewport it's
+       shown in, keeping every element's proportions identical — this is
+       what makes the game read as one window rather than a stack of
+       independently-resizing panels. */
+    _fitFrame() {
+      const frame = this.el.frame;
+      if (!frame) return;
+      const FRAME_W = 760;
+      const FRAME_H = 820;
+      const availW = window.innerWidth;
+      const availH = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+      const scale = Math.min(availW / FRAME_W, availH / FRAME_H) * 0.98;
+      frame.style.width = FRAME_W + 'px';
+      frame.style.height = FRAME_H + 'px';
+      frame.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
     }
 
     _injectFonts() {
@@ -476,11 +520,15 @@
 
     _buildHeader() {
       const header = this._div('bj-header');
+      header.appendChild(this._buildBrand());
+      return header;
+    }
 
+    _buildBrand() {
       const brand = this._div('bj-brand');
       const crestWrap = document.createElement('div');
       crestWrap.className = 'bj-crest';
-      crestWrap.innerHTML = shieldSVG(44);
+      crestWrap.innerHTML = shieldSVG(36);
       const titleWrap = document.createElement('div');
       const title = document.createElement('p');
       title.className = 'bj-title';
@@ -492,7 +540,14 @@
       titleWrap.appendChild(subtitle);
       brand.appendChild(crestWrap);
       brand.appendChild(titleWrap);
+      return brand;
+    }
 
+    // Winnings/bankroll/stats now live in a vertical sidebar next to the
+    // table (instead of a wide row above it), so the table column can be
+    // narrower and taller — which makes the cards themselves bigger and
+    // easier to read.
+    _buildStatsSidebar() {
       const stats = this._div('bj-stats-panel');
       const statDefs = [
         ['bankroll', 'Bankroll'], ['bet', 'Current Bet'], ['winnings', 'Total Winnings'],
@@ -514,10 +569,7 @@
         stats.appendChild(item);
         this.statValueEls[key] = v;
       });
-
-      header.appendChild(brand);
-      header.appendChild(stats);
-      return header;
+      return stats;
     }
 
     _buildTable() {
