@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
+<title>Sjekkereplikk Generator — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade" style="text-align:center;">
+  <h1 class="page-title">🎲 Sjekkereplikk Generator</h1>
+  <p class="page-lead">
+    Trykk terningen for en tilfeldig sjekkereplikk. Bruk på egen risiko. Vi tar intet ansvar for avslag, flause blikk eller uventet suksess.
+  </p>
+
+  <div style="margin: 30px 0;">
+    <button class="dice-btn" id="diceBtn" onclick="rollDice()">🎲</button>
+  </div>
+
+  <div class="replikk-box" id="replikkBox">Trykk terningen for å starte!</div>
+
+  <div style="margin-top:20px;">
+    <button class="btn small" onclick="copyReplikk()">📋 Kopiér replikk</button>
+  </div>
+
+  <section style="margin-top:60px; text-align:left;">
+    <h2 style="color:var(--amber); text-align:center;">Litt av arkivet</h2>
+    <div class="grid" id="archivePreview"></div>
+  </section>
+</main>
+
+<footer>
+  <p>🍺 GUTTA.NO — flørting med et snev av tømmermenn.</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script>
+const replikker = [
+  "Er du en parkeringsbot? For du gir meg følelser jeg ikke visste jeg kunne føle.",
+  "Unnskyld, men har du et kart? Jeg går meg bort i øynene dine.",
+  "Er du wifi? For jeg føler en sterk forbindelse.",
+  "Tror du på kjærlighet ved første blikk, eller må jeg gå forbi en gang til?",
+  "Er du en parkeringsplass i Oslo sentrum? For du er vanskelig å finne, men verdt det.",
+  "Jeg er ikke fotograf, men jeg kan definitivt se oss sammen i fremtiden.",
+  "Er foreldrene dine bakere? For du er en real deilig bolle.",
+  "Beklager, jeg har visst mistet nummeret mitt. Kan jeg få ditt i stedet?",
+  "Er du en termos? For du holder meg varm selv i norsk vinter.",
+  "Du må være trøtt, for du har løpt rundt i hodet mitt hele kvelden.",
+  "Er du en øl? For jeg vil gjerne ta deg med hjem og introdusere deg for vennene mine.",
+  "Jeg heter [navn], men du kan kalle meg i kveld.",
+  "Tror du på skjebnen? Fordi jeg tror akkurat denne baren var skjebnebestemt.",
+  "Er du en app? For jeg vil trykke på deg hele natten.",
+  "Unnskyld, faller du ofte? Fordi du falt rett inn i tankene mine.",
+  "Jeg er ingen matematiker, men jeg er ganske god med tall — kan jeg få ditt?",
+  "Er du sertifisert elektriker? For du tenner virkelig noe i meg.",
+  "Har du et Band-Aid? Jeg skrapte kneet da jeg falt for deg.",
+  "Er du krydder? For du gjør kvelden litt spicy.",
+  "Jeg lette etter en unnskyldning for å komme bort — men du er unnskyldning nok i deg selv.",
+  "Er du fra Trondheim? For du er definitivt nordlys-vakker.",
+  "Unnskyld meg, men jeg tror du har mistet noe — smilet mitt, det forsvant da jeg så deg.",
+  "Er dette flaskepost? For jeg føler jeg akkurat fant en skatt.",
+  "Kan jeg følge deg hjem? Foreldrene mine sa alltid at jeg skulle følge drømmene mine.",
+  "Er du en øltapper? For du får meg til å renne over.",
+  "Jeg er ingen astronom, men jeg vet at du er stjernen i dette rommet.",
+  "Er du en avgift? For jeg vil gjerne betale for mer tid med deg.",
+  "Har vi møttes før? Nei? Da må jeg si — dette er skjebnen som banker på.",
+  "Er du en app-oppdatering? For du gjør alt bedre.",
+  "Vet du hva som passer perfekt sammen? Du og jeg, akkurat her, akkurat nå."
+];
+
+const diceBtn = document.getElementById('diceBtn');
+const replikkBox = document.getElementById('replikkBox');
+
+function rollDice() {
+  diceBtn.classList.add('rolling');
+  GuttaSFX.hiccup();
+  setTimeout(() => {
+    diceBtn.classList.remove('rolling');
+    const pick = replikker[Math.floor(Math.random() * replikker.length)];
+    replikkBox.textContent = pick;
+    replikkBox.dataset.current = pick;
+    replikkBox.style.animation = 'none';
+    void replikkBox.offsetWidth;
+    replikkBox.style.animation = 'popIn 0.5s cubic-bezier(.68,-0.55,.27,1.55)';
+    GuttaSFX.glassClink();
+  }, 600);
+}
+
+function copyReplikk() {
+  const text = replikkBox.dataset.current;
+  if (!text) { showToast("Kast terningen først! 🎲"); return; }
+  navigator.clipboard.writeText(text).then(() => showToast("Replikk kopiert! Lykke til 😏"));
+}
+
+// preview cards
+const previewList = [replikker[3], replikker[10], replikker[17], replikker[24]];
+const archive = document.getElementById('archivePreview');
+previewList.forEach(r => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `<div class="icon">💬</div><p>${r}</p>`;
+  archive.appendChild(div);
+});
+</script>
+</body>
+</html>

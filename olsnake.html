@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
+<title>Ølsnake — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade game-wrap">
+  <h1 class="page-title">🐍 Ølsnake</h1>
+  <p class="page-lead">
+    Styr fyren rundt banen og få ham til å nappe i seg øl etter øl. Jo mer han drikker, jo lengre (og fyllere) blir slangen hans. Ikke krasj i veggen eller deg selv!
+    <br><strong style="color:var(--beer-gold);">Hver øl gir 5 GK i lommeboka 🪙</strong>
+  </p>
+
+  <div class="size-picker" id="sizePicker">
+    <button data-size="14" class="active">Liten Vorspiel (14×14)</button>
+    <button data-size="20">Standard Fest (20×20)</button>
+    <button data-size="28">Episk Byfest (28×28)</button>
+  </div>
+
+  <div class="game-stats">
+    <div>🍺 Øl drukket: <span id="scoreVal">0</span></div>
+    <div>🏆 Rekord: <span id="highScoreVal">0</span></div>
+  </div>
+
+  <canvas id="snakeCanvas" width="480" height="480"></canvas>
+
+  <div class="game-controls">
+    <button class="btn small" id="startBtn" onclick="startGame()">▶️ Start spillet</button>
+    <button class="btn small" id="pauseBtn" onclick="togglePause()">⏸️ Pause</button>
+  </div>
+
+  <div class="dpad">
+    <button class="up" onclick="setDir('up')">⬆️</button>
+    <button class="left" onclick="setDir('left')">⬅️</button>
+    <button class="down" onclick="setDir('down')">⬇️</button>
+    <button class="right" onclick="setDir('right')">➡️</button>
+  </div>
+  <p style="opacity:0.6; font-size:0.9rem;">Bruk piltaster / WASD på PC, eller knappene over på mobil.</p>
+</main>
+
+<div class="lightbox" id="gameOverModal">
+  <div class="lightbox-inner" style="text-align:center; padding:40px 20px;">
+    <h2 style="color:var(--amber); font-size:2.5rem;">🍻 GAME OVER, GUTT!</h2>
+    <p style="font-size:1.3rem;">Han klarte å nappe i seg <span id="finalScore" style="color:var(--beer-gold); font-weight:bold;">0</span> øl før han datt overende.</p>
+    <p id="snakeReward" style="color:var(--beer-gold); font-weight:700;"></p>
+    <button class="btn" onclick="closeModalAndRestart()">🔄 Spill igjen</button>
+  </div>
+</div>
+
+<footer>
+  <p>🍺 GUTTA.NO — jo lenger slangen, jo villere fylla.</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script src="js/snake.js"></script>
+</body>
+</html>

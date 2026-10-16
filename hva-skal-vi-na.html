@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
+<title>Hva skal vi nå? — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade wheel-page">
+  <h1 class="page-title">🎡 Hva skal vi nå?</h1>
+  <p class="page-lead">Ingen idéer igjen i tanken? La hjulet bestemme kveldens skjebne. Spinn og godta konsekvensene.</p>
+
+  <div class="wheel-wrap">
+    <div class="pointer"></div>
+    <canvas id="wheelCanvas" width="420" height="420"></canvas>
+  </div>
+
+  <button class="btn" id="spinBtn" onclick="spinWheel()">🎲 SPINN HJULET</button>
+  <div class="result-box" id="resultBox"></div>
+
+  <section style="margin-top:60px;">
+    <h2 style="color:var(--amber);">Alle mulighetene på hjulet</h2>
+    <ul id="optionList" class="option-list"></ul>
+  </section>
+</main>
+
+<footer>
+  <p>🍺 GUTTA.NO — spinn ansvarlig (eller ikke).</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script>
+const options = [
+  { text: "Drikkeregler-tid! Gå og les reglene 📜", color: "#f4a825" },
+  { text: "Rangér en øl på Øl Ratings 🍺", color: "#e6432f" },
+  { text: "Finn en ny bar og rate den 🏙️", color: "#3fae5a" },
+  { text: "Bruk en sjekkereplikk NÅ 💬", color: "#ffb92e" },
+  { text: "Spill en runde Ølsnake 🐍", color: "#c96a1a" },
+  { text: "Blackjack-duell: taperen henter neste runde 🃏", color: "#2694c9" },
+  { text: "Ta en shot og fortell en pinlig historie 🥃", color: "#7a3ea1" },
+  { text: "Ring en du ikke har snakket med på 1 år ☎️", color: "#e6432f" },
+  { text: "Meyer rundt bordet, den som taper drikker 🎲", color: "#3fae5a" },
+  { text: "Lag en dans-battle, ingen unnskyldninger 💃", color: "#f4a825" },
+  { text: "Alle må skifte klesplagg med sidemannen 👕", color: "#c96a1a" },
+  { text: "Rulett: alle velger farge, feil farge drikker 🔴", color: "#7a3ea1" },
+  { text: "Fortell den flaueste fylle-historien din 😳", color: "#2694c9" },
+  { text: "Finn på en ny drikkeregel på stedet 🍻", color: "#ffb92e" },
+  { text: "Spill 'never have I ever' i 5 runder 🙊", color: "#3fae5a" }
+];
+
+const list = document.getElementById('optionList');
+options.forEach(o => {
+  const li = document.createElement('li');
+  li.textContent = o.text;
+  list.appendChild(li);
+});
+
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const numOptions = options.length;
+const arc = (2 * Math.PI) / numOptions;
+const segDeg = 360 / numOptions;
+let currentRotation = 0;
+
+function drawWheel() {
+  const radius = canvas.width / 2;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < numOptions; i++) {
+    const angle = i * arc;
+    ctx.beginPath();
+    ctx.fillStyle = options[i].color;
+    ctx.moveTo(radius, radius);
+    ctx.arc(radius, radius, radius - 6, angle, angle + arc);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#3a1f0f";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(radius, radius);
+    ctx.rotate(angle + arc / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#241206";
+    ctx.font = "bold 13px Rubik, sans-serif";
+    const label = options[i].text.split(' ').slice(0, 3).join(' ');
+    ctx.fillText(label, radius - 16, 5);
+    ctx.restore();
+  }
+  // center hub
+  ctx.beginPath();
+  ctx.arc(radius, radius, 26, 0, Math.PI * 2);
+  ctx.fillStyle = "#fff8e7";
+  ctx.fill();
+  ctx.strokeStyle = "#3a1f0f";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.font = "24px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("🍺", radius, radius + 8);
+}
+drawWheel();
+if (document.fonts) document.fonts.ready.then(drawWheel);
+
+let spinning = false;
+function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  const box = document.getElementById('resultBox');
+  box.classList.remove('pop');
+  box.textContent = '';
+
+  // Segment i starts at i*segDeg (clockwise from 3 o'clock); the pointer sits at 12 o'clock (270°).
+  // Work out the absolute rotation that puts the chosen segment's middle under the pointer,
+  // so the announced result always matches what the wheel shows, spin after spin.
+  const chosenIndex = Math.floor(Math.random() * numOptions);
+  const segCenter = chosenIndex * segDeg + segDeg / 2;
+  const jitter = (Math.random() - 0.5) * segDeg * 0.6;
+  const wanted = ((270 - segCenter + jitter) % 360 + 360) % 360;
+  const now = ((currentRotation % 360) + 360) % 360;
+  const extraSpins = 5 + Math.floor(Math.random() * 3);
+  currentRotation += extraSpins * 360 + ((wanted - now + 360) % 360);
+  canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+  GuttaSFX.drumroll();
+
+  setTimeout(() => {
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    box.textContent = "👉 " + options[chosenIndex].text;
+    box.classList.add('pop');
+    GuttaSFX.cheer();
+    confettiBurst();
+    Achievements.unlock('wheel');
+  }, 5600);
+}
+</script>
+</body>
+</html>

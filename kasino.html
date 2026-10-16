@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪙</text></svg>">
+<title>Kasino-lobby — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade">
+  <h1 class="page-title center">🪙 Gutta Kasino</h1>
+  <p class="page-lead center">Alle spillene deler samme lommebok med Gutta-kroner (GK). Det er lekepenger: de kan ikke kjøpes, og de kan ikke tas ut. Bare æren står på spill.</p>
+
+  <section class="lobby-hero" style="margin-top:30px;">
+    <div class="panel wallet-big">
+      <div class="label">Lommebok</div>
+      <div class="amount" id="lobbyBalance">0 GK</div>
+      <div class="sub">Tjen GK i kasinoet, i Ølsnake (5 GK per øl) og ved å låse opp prestasjoner.</div>
+      <div class="wallet-meta">
+        <span>Toppnotering: <b id="lobbyPeak"></b></span>
+        <span>Mammalån tatt: <b id="lobbyLoans"></b></span>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn small red" id="loanBtn" type="button">🪫 Ta mammalån (+500 GK)</button>
+      </div>
+      <div class="lobby-toggles">
+        <label class="switch"><input type="checkbox" id="soundSwitch"><span class="track"></span><span>🔊 Lyd<small>Alle lyder lages live i nettleseren.</small></span></label>
+        <label class="switch"><input type="checkbox" id="drinkSwitch"><span class="track"></span><span>🥴 Drikkemodus<small>Spillene sier ifra når noen skal ta en slurk. Drikk ansvarlig.</small></span></label>
+      </div>
+    </div>
+
+    <div class="panel bonus-box">
+      <h2 style="color:var(--amber); margin:0;">🎁 Daglig bonus</h2>
+      <div class="bonus-wheel-wrap">
+        <div class="pointer"></div>
+        <canvas id="bonusWheel" width="300" height="300"></canvas>
+      </div>
+      <button class="btn small" id="bonusBtn" type="button">Spinn bonushjulet</button>
+      <div class="bonus-info" id="bonusInfo"></div>
+    </div>
+  </section>
+
+  <h2 class="section-title">🎮 Velg spill</h2>
+  <section class="grid">
+    <a class="card" href="blackjack.html">
+      <div class="icon">🃏</div>
+      <h3>Blackjack</h3>
+      <p>Dealeren pluss opptil tre AI-spillere. På Vanskelig teller AI-ene kort og øker innsatsen når kortstokken er varm.</p>
+      <div class="tags"><span class="tag">Lett · Middels · Vanskelig</span><span class="tag green">Turnering</span></div>
+    </a>
+    <a class="card" href="rulett.html">
+      <div class="icon">🔴</div>
+      <h3>Rulett</h3>
+      <p>Deg mot huset. Velg mellom snilt europeisk hjul med «la partage», vanlig europeisk og brutalt amerikansk med dobbel null.</p>
+      <div class="tags"><span class="tag">Mot huset</span><span class="tag">3 hjul</span></div>
+    </a>
+    <a class="card" href="poker.html">
+      <div class="icon">♠️</div>
+      <h3>Poker</h3>
+      <p>Texas Hold'em sit &amp; go. Lette AI-er ser for mange flopper, mens de vanskelige regner odds, bløffer og leser deg.</p>
+      <div class="tags"><span class="tag">Lett · Middels · Vanskelig</span><span class="tag">1–5 motstandere</span></div>
+    </a>
+    <a class="card" href="meyer.html">
+      <div class="icon">🎲</div>
+      <h3>Meyer</h3>
+      <p>Rist begeret, si et tall og håp at ingen tror du lyver. AI-ene på Vanskelig husker hvor ofte du bløffer.</p>
+      <div class="tags"><span class="tag">Lett · Middels · Vanskelig</span><span class="tag red">Drikkespill</span></div>
+    </a>
+    <a class="card" href="olautomat.html">
+      <div class="icon">🎰</div>
+      <h3>Ølautomaten</h3>
+      <p>Fem gevinstlinjer, wild-skum og gratisspinn. Lav, middels eller høy volatilitet.</p>
+      <div class="tags"><span class="tag">3 volatiliteter</span><span class="tag green">Gratisspinn</span></div>
+    </a>
+  </section>
+
+  <h2 class="section-title">📊 Statistikk</h2>
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <h2 class="section-title">🏆 Prestasjoner <small id="achvCount"></small></h2>
+  <div class="achv-grid" id="achvGrid"></div>
+
+  <section class="danger-zone">
+    <p>Vil du starte helt på nytt? Dette nullstiller lommebok, statistikk og prestasjoner på denne enheten.</p>
+    <button class="btn small ghost" id="resetBtn" type="button">♻️ Nullstill kasinoet</button>
+  </section>
+</main>
+
+<footer>
+  <p>🍺 GUTTA.NO — huset vinner alltid, men gutta vinner hjertene.</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script>
+/* ---------- wallet panel ---------- */
+function paintWallet() {
+  document.getElementById('lobbyBalance').textContent = formatGK(Wallet.balance);
+  document.getElementById('lobbyPeak').textContent = formatGK(Wallet.peak);
+  document.getElementById('lobbyLoans').textContent = Wallet.loans;
+  const loanBtn = document.getElementById('loanBtn');
+  loanBtn.disabled = !Wallet.canBorrow();
+  loanBtn.title = Wallet.canBorrow() ? 'Mamma ordner det' : 'Mamma låner bare ut når du har under 50 GK';
+}
+document.getElementById('loanBtn').addEventListener('click', () => {
+  const got = Wallet.borrow();
+  if (got) { showToast('Mamma sendte ' + formatGK(got) + '. «Ikke bruk alt på kort nå.» 💌'); GuttaSFX.coin(); }
+});
+document.addEventListener('gutta:wallet', () => { paintWallet(); paintStats(); });
+
+/* ---------- toggles ---------- */
+const soundSwitch = document.getElementById('soundSwitch');
+const drinkSwitch = document.getElementById('drinkSwitch');
+function paintToggles() { soundSwitch.checked = !!Settings.get('sound'); drinkSwitch.checked = !!Settings.get('drink'); }
+soundSwitch.addEventListener('change', () => { Settings.set('sound', soundSwitch.checked); GuttaSFX.click(); });
+drinkSwitch.addEventListener('change', () => {
+  Settings.set('drink', drinkSwitch.checked);
+  if (drinkSwitch.checked) { Achievements.unlock('drink_mode'); drinkPrompt('Skål!', 'Drikkemodus er på. Spillene sier ifra når noen skal drikke.'); }
+});
+document.addEventListener('gutta:settings', paintToggles);
+
+/* ---------- daily bonus wheel ---------- */
+const PRIZES = [100, 250, 150, 500, 100, 200, 1000, 300];
+const COLORS = ['#f4a825', '#e6432f', '#3fae5a', '#7a3ea1', '#ffb92e', '#2694c9', '#c96a1a', '#3fae5a'];
+const wheel = document.getElementById('bonusWheel');
+const wctx = wheel.getContext('2d');
+const SEG = 360 / PRIZES.length;
+let wheelRot = 0;
+let wheelBusy = false;
+
+function drawBonusWheel() {
+  const r = wheel.width / 2;
+  wctx.clearRect(0, 0, wheel.width, wheel.height);
+  PRIZES.forEach((p, i) => {
+    const a0 = (i * SEG) * Math.PI / 180, a1 = ((i + 1) * SEG) * Math.PI / 180;
+    wctx.beginPath(); wctx.moveTo(r, r); wctx.arc(r, r, r - 4, a0, a1); wctx.closePath();
+    wctx.fillStyle = COLORS[i]; wctx.fill();
+    wctx.strokeStyle = '#3a1f0f'; wctx.lineWidth = 2; wctx.stroke();
+    wctx.save(); wctx.translate(r, r); wctx.rotate((a0 + a1) / 2);
+    wctx.textAlign = 'right'; wctx.fillStyle = '#241206';
+    wctx.font = (p >= 1000 ? '26px' : '24px') + ' Bangers, Impact, sans-serif';
+    wctx.fillText(p, r - 14, 9); wctx.restore();
+  });
+  wctx.beginPath(); wctx.arc(r, r, 22, 0, Math.PI * 2); wctx.fillStyle = '#fff8e7'; wctx.fill();
+  wctx.strokeStyle = '#3a1f0f'; wctx.lineWidth = 3; wctx.stroke();
+  wctx.font = '20px sans-serif'; wctx.textAlign = 'center'; wctx.fillText('🪙', r, r + 7);
+}
+
+function paintBonus() {
+  const btn = document.getElementById('bonusBtn');
+  const info = document.getElementById('bonusInfo');
+  if (wheelBusy) return;
+  if (Wallet.bonusAvailable()) { btn.disabled = false; info.textContent = 'Én gratis spinn hver dag. Opptil 1 000 GK!'; }
+  else { btn.disabled = true; info.textContent = 'Bonusen er hentet i dag. Kom tilbake i morgen 🍺'; }
+}
+
+document.getElementById('bonusBtn').addEventListener('click', () => {
+  if (wheelBusy || !Wallet.bonusAvailable()) return;
+  wheelBusy = true;
+  document.getElementById('bonusBtn').disabled = true;
+  document.getElementById('bonusInfo').textContent = 'Hjulet snurrer…';
+  const idx = Math.floor(Math.random() * PRIZES.length);
+  const center = idx * SEG + SEG / 2 + (Math.random() - 0.5) * SEG * 0.6;
+  const wanted = ((270 - center) % 360 + 360) % 360;
+  const now = ((wheelRot % 360) + 360) % 360;
+  wheelRot += 360 * 5 + ((wanted - now + 360) % 360);
+  wheel.style.transition = 'transform 4.5s cubic-bezier(.17,.67,.16,.99)';
+  wheel.style.transform = 'rotate(' + wheelRot + 'deg)';
+  GuttaSFX.drumroll();
+  setTimeout(() => {
+    wheelBusy = false;
+    Wallet.claimBonus(PRIZES[idx]);
+    document.getElementById('bonusInfo').textContent = '🎉 Du vant ' + formatGK(PRIZES[idx]) + '!';
+    GuttaSFX.bigWin();
+    confettiBurst();
+    setTimeout(paintBonus, 2500);
+  }, 4600);
+});
+
+/* ---------- stats ---------- */
+function paintStats() {
+  const net = (v) => ({ v: (v > 0 ? '+' : '') + formatGK(v), cls: v > 0 ? 'pos' : (v < 0 ? 'neg' : '') });
+  const tiles = [
+    ['Blackjack-hender', Stats.get('blackjack.hands')],
+    ['Blackjack vunnet', Stats.get('blackjack.wins')],
+    ['Blackjack netto', net(Stats.get('blackjack.net'))],
+    ['Rulett-spinn', Stats.get('roulette.spins')],
+    ['Rulett netto', net(Stats.get('roulette.net'))],
+    ['Pokerturneringer', Stats.get('poker.tournaments')],
+    ['Pokerseirer', Stats.get('poker.wins')],
+    ['Meyer-spill / seirer', Stats.get('meyer.games') + ' / ' + Stats.get('meyer.wins')],
+    ['Ølautomat-spinn', Stats.get('slots.spins')],
+    ['Ølautomat netto', net(Stats.get('slots.net'))],
+    ['Største gevinst', formatGK(Math.max(Stats.get('blackjack.best'), Stats.get('roulette.best'), Stats.get('poker.best'), Stats.get('meyer.best'), Stats.get('slots.best')))],
+    ['Ølsnake-rekord', Stats.get('snake.best') + ' øl']
+  ];
+  document.getElementById('statsGrid').innerHTML = tiles.map(([k, v]) => {
+    const val = typeof v === 'object' ? v : { v: String(v), cls: '' };
+    return '<div class="stat-tile"><div class="k">' + escapeHtml(k) + '</div><div class="v ' + val.cls + '">' + escapeHtml(val.v) + '</div></div>';
+  }).join('');
+}
+
+/* ---------- achievements ---------- */
+function paintAchievements() {
+  document.getElementById('achvCount').textContent = Achievements.count() + ' av ' + Achievements.list.length + ' låst opp';
+  document.getElementById('achvGrid').innerHTML = Achievements.list.map((a) => {
+    const done = Achievements.has(a.id);
+    return '<div class="achv' + (done ? ' done' : '') + '" title="' + (done ? 'Låst opp' : 'Ikke låst opp ennå') + '">' +
+      '<div class="ai">' + (done ? a.icon : '🔒') + '</div><div>' +
+      '<div class="an">' + escapeHtml(a.name) + '</div><div class="ad">' + escapeHtml(a.desc) + '</div>' +
+      (a.reward ? '<div class="ar">+' + formatGK(a.reward) + '</div>' : '') + '</div></div>';
+  }).join('');
+}
+document.addEventListener('gutta:achievement', () => setTimeout(paintAchievements, 350));
+
+/* ---------- reset ---------- */
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('Nullstille lommebok, statistikk og prestasjoner? Dette kan ikke angres.')) return;
+  Wallet.reset(); Stats.reset(); Achievements.reset();
+  paintWallet(); paintStats(); paintAchievements(); paintBonus();
+  showToast('Kasinoet er nullstilt. Lykke til, gutt! 🍀');
+});
+
+drawBonusWheel();
+if (document.fonts) document.fonts.ready.then(drawBonusWheel);
+paintWallet(); paintToggles(); paintBonus(); paintStats(); paintAchievements();
+</script>
+</body>
+</html>

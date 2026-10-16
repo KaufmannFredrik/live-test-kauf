@@ -1,0 +1,222 @@
+/* =========================================================
+   RULETT — hjul, brett og kontroller
+   ========================================================= */
+
+.ru-layout {
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(250px, 340px) minmax(0, 1fr);
+  grid-template-areas: "left right" "side right";
+  gap: 14px;
+  align-items: start;
+}
+.ru-left { grid-area: left; display: flex; flex-direction: column; gap: 12px; }
+.ru-right { grid-area: right; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ru-side { grid-area: side; }
+
+/* ---------- hjulet ---------- */
+.ru-wheel-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  transition: width 0.3s ease;
+}
+.ru-wheel-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 14px 26px rgba(0,0,0,0.6));
+}
+.ru-result {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 27%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--foam);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  animation: ruPop 0.45s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes ruPop { 0% { transform: translate(-50%, -50%) scale(0); } 70% { transform: translate(-50%, -50%) scale(1.15); } 100% { transform: translate(-50%, -50%) scale(1); } }
+.ru-result[hidden] { display: none; }
+.ru-result b { font-family: var(--font-display); font-size: clamp(1.3rem, 4.5vw, 2.4rem); line-height: 1; letter-spacing: 1px; }
+.ru-result span { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.ru-result.red, .ru-ball.red, .ru-last b.red { background: #c8202f; }
+.ru-result.black, .ru-ball.black, .ru-last b.black { background: #1b1b1b; }
+.ru-result.green, .ru-ball.green, .ru-last b.green { background: #1e8a3c; }
+
+/* ---------- resultater ---------- */
+.ru-info { display: flex; flex-direction: column; gap: 8px; }
+.ru-last { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.ru-last b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--foam);
+  background: rgba(0,0,0,0.3);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0;
+}
+.ru-history { display: flex; flex-wrap: wrap; gap: 4px; }
+.ru-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,248,231,0.5);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.ru-stats { display: flex; flex-wrap: wrap; gap: 5px; font-size: 0.76rem; font-weight: 700; }
+.ru-stats span { padding: 2px 8px; border-radius: 50px; background: rgba(0,0,0,0.35); }
+.ru-stats .r { color: #ff8a7a; }
+.ru-stats .g { color: #7dff9f; }
+.ru-stats .hot { color: var(--beer-gold); }
+
+/* ---------- brettet ---------- */
+.ru-felt { padding: 16px 14px; }
+.ru-board { position: relative; display: grid; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.ru-board[data-orient="h"] {
+  grid-template-columns: 1.05fr repeat(12, 1fr) 1fr;
+  grid-template-rows: repeat(6, 1fr) 1.3fr 1.3fr;
+  aspect-ratio: 14 / 5.6;
+}
+.ru-board[data-orient="v"] {
+  grid-template-columns: 0.85fr 0.85fr repeat(6, 0.5fr);
+  grid-template-rows: 1.1fr repeat(12, 1fr) 1fr;
+  aspect-ratio: 1 / 1.3;
+}
+.ru-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -0.5px;
+  border: 1px solid rgba(255,248,231,0.6);
+  color: var(--foam);
+  font-weight: 800;
+  font-size: clamp(0.72rem, 1.5vw, 1.05rem);
+  cursor: pointer;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+.ru-cell.num.red { background: #b81d2b; }
+.ru-cell.num.black { background: #161616; }
+.ru-cell.num.green { background: #1e8a3c; }
+.ru-cell.out { background: rgba(0,0,0,0.12); font-size: clamp(0.62rem, 1.25vw, 0.92rem); letter-spacing: 0.04em; }
+.ru-cell.diamond span {
+  display: block;
+  width: auto;
+  height: 46%;
+  aspect-ratio: 1;
+  font-size: 0;
+  transform: rotate(45deg) scaleX(0.75);
+  border: 2px solid var(--foam);
+  border-radius: 3px;
+}
+.ru-cell.diamond.red span { background: #c8202f; }
+.ru-cell.diamond.black span { background: #111; }
+.ru-board[data-orient="v"] .ru-cell.diamond span { height: auto; width: 46%; }
+.ru-board[data-orient="h"] .ru-cell.zero { border-radius: 40% 0 0 40% / 18% 0 0 18%; }
+.ru-board[data-orient="h"] .ru-cell.zero.dz { border-radius: 40% 0 0 0 / 30% 0 0 0; }
+.ru-board[data-orient="h"] .ru-cell.zero:not(.dz) + .ru-cell.dz { border-radius: 40% 0 0 0 / 30% 0 0 0; }
+.ru-board[data-orient="v"] .ru-cell.zero { border-radius: 30% 30% 0 0 / 60% 60% 0 0; }
+.ru-board[data-orient="v"] .ru-cell.out { writing-mode: vertical-rl; transform: rotate(180deg); }
+.ru-board[data-orient="v"] .ru-cell.out.col { writing-mode: horizontal-tb; transform: none; }
+.ru-board[data-orient="v"] .ru-cell.diamond span { transform: rotate(45deg) scaleY(0.75); }
+
+.ru-cell:hover, .ru-cell.cover { filter: brightness(1.35); box-shadow: inset 0 0 0 2px var(--beer-gold); z-index: 1; }
+.ru-cell.hit { z-index: 2; animation: ruHit 0.8s ease-in-out 4; box-shadow: inset 0 0 0 3px #ffd66b, 0 0 20px rgba(255,214,107,0.9); }
+@keyframes ruHit { 50% { filter: brightness(1.6); } }
+
+.ru-hot-layer, .ru-chip-layer { position: absolute; inset: 0; pointer-events: none; }
+.ru-chip-layer { z-index: 4; }
+.ru-hot-layer { z-index: 3; }
+.ru-hot {
+  position: absolute;
+  width: var(--hot, 16px);
+  height: var(--hot, 16px);
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.ru-hot:hover, .ru-hot:focus-visible { background: rgba(255,214,107,0.5); box-shadow: 0 0 0 2px #ffd66b; }
+@media (hover: none) { .ru-hot { background: rgba(255,248,231,0.14); } }
+.ru-my-chip.chip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  font-size: 0.6rem;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.5);
+  animation: chipDrop 0.25s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes chipDrop { from { transform: translate(-50%, -90%) scale(1.3); opacity: 0.4; } }
+.ru-board .float-text { transform: translate(-50%, 0); z-index: 6; font-size: 1.2rem; }
+
+/* ---------- kontroller ---------- */
+.ru-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+.ru-total { display: flex; flex-direction: column; align-items: center; min-width: 60px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.ru-total b { font-size: 1.35rem; color: var(--beer-gold); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.ru-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ru-spin { min-width: 150px; }
+
+@media (max-width: 900px) {
+  .ru-layout { grid-template-columns: 1fr; grid-template-areas: "left" "right" "side"; }
+  .ru-left { flex-direction: row; align-items: center; gap: 14px; }
+  .ru-wheel-wrap { width: 128px; flex-shrink: 0; margin: 0; }
+  .ru-info { flex: 1; min-width: 0; }
+  .ru-history .ru-ball:nth-child(n+11) { display: none; }
+  .ru-wheel-wrap.overlay {
+    position: fixed;
+    z-index: 350;
+    left: 50%;
+    top: 50%;
+    width: min(88vw, 70vh);
+    max-width: none;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 100vmax rgba(12,6,2,0.82);
+  }
+  .ru-controls {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin: 0 -8px -10px;
+    padding: 8px 8px 10px;
+    border-radius: 18px 18px 0 0;
+    border-top: 2px solid var(--amber);
+    background: linear-gradient(180deg, rgba(42,22,8,0.94), #1c0f05);
+    box-shadow: 0 -10px 24px rgba(0,0,0,0.45);
+  }
+  .ru-controls .chip-tray { width: 100%; }
+  .ru-spin { min-width: 120px; }
+}
+@media (max-width: 600px) {
+  .ru-felt { padding: 10px 8px; }
+  .ru-controls { gap: 8px 10px; }
+  .ru-btns .tool-btn { padding: 5px 9px; }
+}

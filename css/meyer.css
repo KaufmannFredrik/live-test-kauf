@@ -1,0 +1,180 @@
+/* =========================================================
+   MEYER — terninger, beger og bløff
+   ========================================================= */
+
+.my-layout {
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 12px;
+}
+.my-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.my-table {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 18px auto 10px;
+  aspect-ratio: 16 / 9;
+  max-height: calc(100dvh - var(--header-h) - 260px);
+  min-height: 300px;
+  border-radius: 50%;
+  overflow: visible;
+}
+.my-table::before { border-radius: 50%; }
+
+.my-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+}
+.my-claim {
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.my-claim b {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.3rem);
+  letter-spacing: 1px;
+  text-transform: none;
+  color: var(--beer-gold);
+  text-shadow: 2px 2px 0 var(--brown-dark);
+  line-height: 1;
+}
+.my-claim.pop b { animation: popIn 0.45s cubic-bezier(.68,-0.55,.27,1.55); }
+.my-note { min-height: 1.2em; font-size: 0.85rem; opacity: 0.8; }
+
+/* cup + dice */
+.my-cupzone { position: relative; width: 130px; height: 96px; display: flex; align-items: flex-end; justify-content: center; }
+.my-dice { display: flex; gap: 8px; padding-bottom: 6px; }
+.die {
+  width: 44px;
+  height: 44px;
+  padding: 5px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  border-radius: 10px;
+  background: linear-gradient(145deg, #ffffff, #e9e2cf);
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.45);
+  animation: dieIn 0.35s ease;
+}
+.die i { width: 70%; height: 70%; margin: auto; border-radius: 50%; }
+.die i.on { background: radial-gradient(circle at 35% 35%, #444, #111); }
+.die.d1 i.on { background: radial-gradient(circle at 35% 35%, #e6432f, #8c1a10); }
+@keyframes dieIn { from { transform: rotate(-30deg) scale(0.6); opacity: 0; } }
+.my-cup {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 112px;
+  height: 92px;
+  transform: translateX(-50%);
+  clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.12) 0 6px, transparent 6px 14px),
+    linear-gradient(180deg, #7a4519, #3a1f0f);
+  border-radius: 10px 10px 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.45s cubic-bezier(.34,1.4,.64,1), opacity 0.3s ease;
+  z-index: 3;
+  box-shadow: inset 0 -8px 0 rgba(244,168,37,0.8);
+}
+.my-cup span { font-family: var(--font-display); color: var(--amber); letter-spacing: 2px; font-size: 1.05rem; transform: translateY(-6px); }
+.my-cup.up { transform: translate(-50%, -105px) rotate(-8deg); }
+.my-cup.peek { transform: translate(-50%, -70px) rotate(6deg); opacity: 0.92; }
+.my-cup.shake { animation: cupShake 0.12s ease-in-out infinite; }
+@keyframes cupShake { 0%, 100% { transform: translateX(-50%) rotate(-7deg); } 50% { transform: translateX(-50%) translateY(-6px) rotate(7deg); } }
+
+/* seats */
+.my-seat {
+  position: absolute;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 50px;
+  background: rgba(20,10,3,0.9);
+  border: 2px solid rgba(244,168,37,0.55);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+  transition: box-shadow 0.25s ease, opacity 0.3s ease;
+}
+.my-seat .avatar { width: 38px; height: 38px; font-size: 1.3rem; border-width: 2px; }
+.my-meta { display: flex; flex-direction: column; line-height: 1.2; }
+.my-lives { font-size: 0.72rem; letter-spacing: -1px; white-space: nowrap; }
+.my-lives .empty { filter: grayscale(1); opacity: 0.3; }
+.my-seat.active { box-shadow: 0 0 0 3px var(--beer-gold), 0 0 22px rgba(255,185,46,0.7); }
+.my-seat.lost { animation: lostShake 0.5s ease; }
+.my-seat.out { opacity: 0.3; filter: grayscale(1); }
+@keyframes lostShake { 20%, 60% { transform: translate(calc(-50% - 6px), -50%); } 40%, 80% { transform: translate(calc(-50% + 6px), -50%); } }
+
+/* controls */
+.my-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 130px; }
+.my-prompt { text-align: center; font-size: 1.02rem; line-height: 1.45; }
+.my-prompt b { color: var(--beer-gold); }
+.my-prompt .warn { color: #ff9c8f; font-weight: 700; }
+.my-hint { text-align: center; font-size: 0.86rem; color: #9ff0b4; }
+.my-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  width: min(640px, 100%);
+}
+.my-val {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7px 2px 5px;
+  border-radius: 10px;
+  border: 2px solid rgba(244,168,37,0.4);
+  background: rgba(255,255,255,0.06);
+  color: var(--foam);
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+  line-height: 1.1;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.my-val small { font-weight: 600; font-size: 0.62rem; opacity: 0.7; }
+.my-val:hover:not(:disabled) { background: var(--amber); color: var(--brown-dark); transform: translateY(-2px); }
+.my-val:disabled { opacity: 0.25; cursor: not-allowed; }
+.my-val.real { border-color: var(--green); box-shadow: 0 0 0 2px rgba(63,174,90,0.6); }
+
+/* ladder */
+.my-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font-size: 0.8rem; }
+.my-ladder li { display: flex; justify-content: space-between; padding: 2px 6px; border-radius: 6px; }
+.my-ladder li small { opacity: 0.6; }
+.my-ladder li.cur { background: var(--amber); color: var(--brown-dark); font-weight: 800; }
+
+@media (max-width: 1000px) {
+  .my-layout { grid-template-columns: 1fr; }
+  .my-side { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+}
+@media (max-width: 700px) {
+  .my-table { aspect-ratio: 4 / 5; max-height: calc(100dvh - var(--header-h) - 300px); min-height: 330px; margin: 10px auto 4px; }
+  .my-seat { padding: 2px 8px 2px 2px; gap: 4px; }
+  .my-seat .avatar { width: 30px; height: 30px; font-size: 1rem; }
+  .my-seat .seat-name { font-size: 0.72rem; }
+  .my-lives { font-size: 0.6rem; }
+  .my-cupzone { width: 110px; height: 84px; }
+  .my-cup { width: 96px; height: 80px; }
+  .die { width: 38px; height: 38px; }
+  .my-grid { gap: 3px; }
+  .my-val { font-size: 0.7rem; padding: 6px 1px 4px; }
+  .my-controls { min-height: 110px; }
+}

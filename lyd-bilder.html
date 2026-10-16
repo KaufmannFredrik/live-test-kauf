@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
+<title>Lyd & Bilder — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade">
+  <h1 class="page-title center">📸 Lyd & Bilder</h1>
+  <p style="text-align:center; max-width:650px; margin:0 auto; opacity:0.9;">
+    Alt du trenger for maksimal stemning: promper, ølklink, jubel og rampete øyeblikk. Trykk på lydknappene — alt spilles av direkte i nettleseren, ingen nedlasting nødvendig.
+  </p>
+
+  <section>
+    <h2 style="color:var(--amber); text-align:center; margin-top:50px;">🔊 Lydbrett</h2>
+    <div class="soundboard-grid" id="soundboard"></div>
+  </section>
+
+  <section>
+    <h2 style="color:var(--amber); text-align:center;">🖼️ Rampete øyeblikk (galleri)</h2>
+    <p style="text-align:center; opacity:0.7;">Trykk på et bilde for å se det større.</p>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <section style="text-align:center; margin-top:60px;">
+    <h2 style="color:var(--amber);">🎵 Festmusikk-generator</h2>
+    <p style="max-width:550px; margin:0 auto 20px; opacity:0.9;">Ingen Spotify-premium? Ingen problem. Trykk for å generere en liten technoish beat rett i nettleseren.</p>
+    <button class="btn" id="musicBtn" onclick="toggleBeat()">▶️ Start beaten</button>
+    <div style="margin-top:14px;">
+      <label class="range-slider-label">Tempo: </label>
+      <input type="range" id="bpmSlider" min="80" max="160" value="120">
+      <span id="bpmVal">120</span> BPM
+    </div>
+  </section>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-inner" id="lightboxInner"></div>
+</div>
+
+<footer>
+  <p>🍺 GUTTA.NO — alle lyder generert live, ingen fillagring nødvendig.</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script src="js/gallery.js"></script>
+<script>
+const sounds = [
+  { emoji: '💨', label: 'Promp', fn: 'fart' },
+  { emoji: '🍺', label: 'Ølklink', fn: 'beerCrack' },
+  { emoji: '🥂', label: 'Glass-skål', fn: 'glassClink' },
+  { emoji: '🤢', label: 'Rap', fn: 'burp' },
+  { emoji: '📯', label: 'Airhorn', fn: 'airhorn' },
+  { emoji: '👏', label: 'Jubel', fn: 'cheer' },
+  { emoji: '🥁', label: 'Trommevirvel', fn: 'drumroll' },
+  { emoji: '😵', label: 'Hikke', fn: 'hiccup' },
+  { emoji: '🗣️', label: 'Sleip tale', fn: 'slur' },
+  { emoji: '👐', label: 'Applaus', fn: 'applause' }
+];
+
+const board = document.getElementById('soundboard');
+sounds.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'sound-btn';
+  btn.innerHTML = `<span class="emoji">${s.emoji}</span><span>${s.label}</span>`;
+  btn.addEventListener('click', () => {
+    GuttaSFX[s.fn]();
+    btn.classList.add('playing');
+    setTimeout(() => btn.classList.remove('playing'), 400);
+  });
+  board.appendChild(btn);
+});
+
+// ---------- simple in-browser generated beat ----------
+let beatInterval = null;
+let beatOn = false;
+const bpmSlider = document.getElementById('bpmSlider');
+bpmSlider.addEventListener('input', () => {
+  document.getElementById('bpmVal').textContent = bpmSlider.value;
+  if (beatOn) { stopBeat(); startBeat(); }
+});
+
+function playKick() {
+  const a = GuttaSFX.ready(); if (!a) return;
+  const c = a.c;
+  const osc = c.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(150, c.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(40, c.currentTime + 0.15);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.8, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.01, c.currentTime + 0.15);
+  osc.connect(g).connect(a.out);
+  osc.start(); osc.stop(c.currentTime + 0.15);
+}
+function playHat() {
+  const a = GuttaSFX.ready(); if (!a) return;
+  const c = a.c;
+  const bufferSize = c.sampleRate * 0.05;
+  const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource();
+  src.buffer = buffer;
+  const hp = c.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 7000;
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.2, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.05);
+  src.connect(hp).connect(g).connect(a.out);
+  src.start();
+}
+
+function startBeat() {
+  const bpm = parseInt(bpmSlider.value);
+  const stepTime = (60 / bpm) / 2 * 1000;
+  let step = 0;
+  beatInterval = setInterval(() => {
+    if (step % 2 === 0) playKick();
+    playHat();
+    step = (step + 1) % 8;
+  }, stepTime);
+  beatOn = true;
+  document.getElementById('musicBtn').textContent = '⏹️ Stopp beaten';
+}
+function stopBeat() {
+  clearInterval(beatInterval);
+  beatOn = false;
+  document.getElementById('musicBtn').textContent = '▶️ Start beaten';
+}
+function toggleBeat() {
+  if (beatOn) stopBeat(); else startBeat();
+}
+</script>
+</body>
+</html>

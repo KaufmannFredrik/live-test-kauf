@@ -1,47 +1,58 @@
-# Blank Canvas
+# GUTTA.NO
 
-A minimal, navigable multi-page site — blank-canvas / design-tool aesthetic (graph paper backdrop, coordinate readouts, live clock), lorem ipsum placeholder content, real page-to-page navigation.
+Gutta sin hjemmebane: et kasino med spill mot AI og en samling festverktøy. Alt er vanlig HTML, CSS og JavaScript,
+uten byggesteg, så siden fungerer på GitHub Pages og ved å åpne `index.html` direkte. Alle lyder lages live i
+nettleseren (Web Audio API), og det finnes ingen lyd- eller bildefiler.
 
-## Structure
+## Innhold
+
+| Side | Hva |
+|---|---|
+| `index.html` | Hjem: oversikt over alt |
+| `kasino.html` | Kasino-lobby: lommebok, daglig bonushjul, mammalån, statistikk, prestasjoner, Drikkemodus |
+| `blackjack.html` | Blackjack mot dealeren med 0–3 AI-spillere, fritt spill eller turnering på 10 runder |
+| `rulett.html` | Rulett mot huset: europeisk med la partage, europeisk eller amerikansk hjul |
+| `poker.html` | Texas Hold'em sit & go mot 1–5 AI-spillere |
+| `meyer.html` | Meyer, bløffespill med terninger, mot 1–4 AI-spillere |
+| `olautomat.html` | Ølautomaten, spilleautomat med 5 linjer, wild og gratisspinn |
+| `hva-skal-vi-na.html`, `drikkeregler.html`, `sjekkereplikk.html`, `olsnake.html`, `lyd-bilder.html` | Festverktøy |
+| `ol-ratings.html`, `bar-ratinger.html` | Ratinger av øl og barer |
+
+## Vanskelighetsgrader
+
+- **Blackjack**: Lett = 2 stokker, dealer står på myk 17, fulle AI-er. Middels = 4 stokker, AI-ene spiller perfekt
+  basic strategy. Vanskelig = 8 stokker, blackjack betaler 6:5, AI-ene teller kort (Hi-Lo).
+- **Rulett**: nivået velger hjulet (husets fordel 1,35 %, 2,70 % eller 5,26 %).
+- **Poker**: Lett = «calling stations» som avslører hånden sin. Middels = regner odds mot pottodds.
+  Vanskelig = posisjon, bløff, vekting av motstanderens mulige hender og en modell av hvordan du spiller.
+- **Meyer**: Lett = godtroende. Middels = regner sannsynligheter. Vanskelig = lærer når du løfter og hvor ofte du lyver.
+- **Ølautomaten**: lav, middels eller høy volatilitet. RTP er regnet ut eksakt: 94,8 %, 94,6 % og 93,9 %.
+
+## Gutta-kroner (GK)
+
+Alle kasinospillene deler én lommebok i `localStorage`. GK er lekepenger: de kan ikke kjøpes eller tas ut. Du tjener
+GK i kasinoet, i Ølsnake (5 GK per øl), på det daglige bonushjulet og ved å låse opp prestasjoner. Statistikk,
+prestasjoner, ratinger og innstillinger lagres også bare lokalt i nettleseren.
+
+## Struktur
 
 ```
-blank-canvas-site-v2/
-├── index.html      # Home — big "TEST" hero
-├── about.html
-├── work.html
-├── notes.html
-├── contact.html
-├── css/
-│   └── style.css   # shared styling for all pages
-└── js/
-    └── main.js     # shared: clock + mouse-coordinate readout
+css/style.css      felles utseende, meny, lobby
+css/casino.css     felles for spillbordene (kort, sjetonger, AI-seter, dialoger)
+css/<spill>.css    ett ark per spill
+js/common.js       meny, lommebok, statistikk, prestasjoner, lydmotor, toast, Drikkemodus
+js/casino.js       kort, sjetonger, AI-gutta, dialoger, animasjoner, rettferdig tilfeldighet (crypto)
+js/<spill>.js      ett skript per spill
 ```
 
-Each page is a standalone HTML file that shares the same `css/style.css` and `js/main.js`. This is a plain multi-page site (no JS routing) — links are normal `<a href="about.html">` tags, so it works exactly as-is on GitHub Pages, no build step required.
+Menyen bygges av `SITE_NAV` i `js/common.js`. En ny side trenger bare `<div id="site-header"></div>` og
+`<script src="js/common.js"></script>` nederst i `<body>`, pluss en linje i `SITE_NAV`.
 
-## Run locally
+## Kjøre lokalt
 
-Open `index.html` directly in a browser, or serve it:
+Åpne `index.html` i nettleseren, eller start en enkel server:
 
 ```bash
-python3 -m http.server 8000
-# then visit http://localhost:8000
+python -m http.server 8000
+# åpne http://localhost:8000
 ```
-
-## Deploy on GitHub Pages
-
-1. Push this folder's contents to a GitHub repo.
-2. Go to **Settings → Pages**.
-3. Under **Source**, choose the branch (e.g. `main`) and root folder (`/`).
-4. Save — your site will be live at `https://<username>.github.io/<repo-name>/`.
-
-## Add a new page
-
-1. Copy any existing page (e.g. `about.html`) to `newpage.html`.
-2. Update the `<title>`, the `ACTIVE — ...` label, and the page content inside `<main>`.
-3. Add `<a href="newpage.html">New Page</a>` to the `.navlinks` block on **every** page (including the new one, marked `class="active"` there).
-
-## Customize
-
-- Colors, fonts, spacing: edit CSS variables at the top of `css/style.css`.
-- Behavior: `js/main.js` handles the clock and mouse-coordinate readout only — no routing logic needed since navigation is native browser links.

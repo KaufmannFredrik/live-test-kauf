@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
+<title>Drikkeregler — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade">
+  <h1 class="page-title center">📜 Drikkeregler</h1>
+  <p class="page-lead center">
+    Gutta sitt eget offisielle regelverk. 100% hjemmelaget, 0% vitenskapelig fundert. Følg reglene, eller lag dine egne med generatoren under.
+  </p>
+
+  <div class="rules-box">
+    <h2 style="color:var(--amber); margin-top:0;">🍻 Standard Gutta-regler</h2>
+    <ol>
+      <li>Den som sier "jeg drikker aldri mye i kveld" må ta et shot med det samme.</li>
+      <li>Om noen sier navnet ditt feil, drikker de. Om du korrigerer feil, drikker du.</li>
+      <li>Telefonen ringer eller varsler under fest? Eier tar en slurk.</li>
+      <li>Søl du drikke på gulvet, må du synge et vers av nasjonalsangen før du fortsetter.</li>
+      <li>Den siste som legger hånden på bordet når noen roper "GUTTA!" drikker ut.</li>
+      <li>Snakker du om jobb i mer enn 30 sekunder, må du ta en slurk for hvert sekund over.</li>
+      <li>Mister du kortstokken, tar alle en runde.</li>
+      <li>Den som taper "stein saks papir" mot vertskapet må hente neste runde.</li>
+      <li>Sier du "forresten" starter du automatisk en ny historie — og en ny runde.</li>
+      <li>Ingen får forlate bordet uten å utbringe en skål først.</li>
+    </ol>
+  </div>
+
+  <section style="text-align:center; margin-top:60px;">
+    <h2 style="color:var(--amber);">🎰 Regel-generator</h2>
+    <p style="max-width:550px; margin:0 auto 10px; opacity:0.9;">Tom for regler? Trykk knappen og la generatoren dikte opp en helt ny, hjemmelaget drikkeregel til kvelden.</p>
+    <button class="btn rule-generator-btn" onclick="generateRule()">🎲 Generer ny regel</button>
+    <div class="replikk-box" id="ruleBox">Trykk knappen for å få en fersk regel!</div>
+    <button class="btn small" onclick="saveRule()" style="margin-top:10px;">💾 Lagre denne regelen</button>
+  </section>
+
+  <section style="margin-top:60px;">
+    <h2 style="color:var(--amber); text-align:center;">📌 Deres lagrede regler</h2>
+    <div class="entry-list" id="savedRules"></div>
+  </section>
+
+  <section style="margin-top:60px;">
+    <a class="card" href="kasino.html" style="text-align:center;">
+      <div class="icon">🥴</div>
+      <h3>Drikkemodus i kasinoet</h3>
+      <p>Skru på Drikkemodus i kasino-lobbyen, så sier spillene ifra når noen skal ta en slurk: sprekker du i blackjack, blir du tatt i løgn i Meyer eller treffer feil farge i rulett.</p>
+    </a>
+  </section>
+</main>
+
+<footer>
+  <p>🍺 GUTTA.NO — reglene er hellige (inntil neste runde).</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script>
+const triggers = [
+  "Om noen nevner eksen sin",
+  "Hver gang noen sier 'skål'",
+  "Om noen sjekker mobilen tre ganger på rad",
+  "Den som ler først av en dårlig vits",
+  "Om noen banner på et annet språk",
+  "Den som mister balansen, selv litt",
+  "Om noen sier 'jeg må jobbe i morgen'",
+  "Den som spiller en sang alle hater",
+  "Om noen prøver å være for seriøs",
+  "Den som taper i tommel-krig",
+  "Om noen sier 'dette er siste øl for meg'",
+  "Den som glemmer hvor de la mobilen",
+  "Om noen nevner gymtimer",
+  "Den som sier 'forresten' fem ganger",
+  "Om noen prater om diett midt i festen"
+];
+
+const punishments = [
+  "må ta en slurk og gjøre en hane-krøing",
+  "drikker ut glasset sitt",
+  "må synge et vers av en norsk barnesang",
+  "må bytte sete med personen til venstre",
+  "må ta to slurker uten hendene",
+  "må fortelle en flau hemmelighet før neste slurk",
+  "må gjøre ti hopp med rumpe før de drikker",
+  "må snakke med utenlandsk aksent i 3 minutter",
+  "må ta en shot og gi en high-five til alle rundt bordet",
+  "må stå oppreist og utbringe en skål",
+  "må gi fra seg telefonen i 10 minutter",
+  "må late som en dyrelyd hver gang de drikker resten av kvelden"
+];
+
+function generateRule() {
+  const t = triggers[Math.floor(Math.random()*triggers.length)];
+  const p = punishments[Math.floor(Math.random()*punishments.length)];
+  const rule = `${t} — ${p}.`;
+  const box = document.getElementById('ruleBox');
+  box.textContent = rule;
+  box.dataset.current = rule;
+  GuttaSFX.glassClink();
+}
+
+function saveRule() {
+  const box = document.getElementById('ruleBox');
+  const rule = box.dataset.current;
+  if (!rule) { showToast("Generer en regel først! 🎲"); return; }
+  const rules = Store.get('gutta_rules', []);
+  rules.unshift(rule);
+  Store.set('gutta_rules', rules);
+  renderRules();
+  showToast("Regel lagret! 📌");
+  GuttaSFX.beerCrack();
+}
+
+function deleteRule(i) {
+  const rules = Store.get('gutta_rules', []);
+  rules.splice(i, 1);
+  Store.set('gutta_rules', rules);
+  renderRules();
+}
+
+function renderRules() {
+  const rules = Store.get('gutta_rules', []);
+  const container = document.getElementById('savedRules');
+  container.innerHTML = '';
+  if (rules.length === 0) {
+    container.innerHTML = '<p style="opacity:0.6;">Ingen lagrede regler ennå. Generer en over! 👆</p>';
+    return;
+  }
+  rules.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `<span>${r}</span><button class="del-btn" onclick="deleteRule(${i})">Slett</button>`;
+    container.appendChild(div);
+  });
+}
+renderRules();
+</script>
+</body>
+</html>
