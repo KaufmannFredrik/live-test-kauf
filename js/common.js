@@ -465,6 +465,7 @@ function drinkPrompt(title, sub) {
    ========================================================= */
 const SITE_NAV = [
   { href: 'index.html', label: 'Hjem' },
+  { href: 'fiskekalender.html', label: 'Fiske' },
   { label: 'Kasino', items: [
     { href: 'kasino.html', label: 'Kasino-lobby', icon: '🪙' },
     { href: 'blackjack.html', label: 'Blackjack', icon: '🃏' },

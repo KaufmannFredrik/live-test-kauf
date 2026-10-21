@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c0f05">
+<meta name="description" content="Fiskekalender for Trondheimsfjorden fra land: hva biter nå, med vær fra Yr, flo og fjære fra Kartverket, utstyr, plasser og regler.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎣</text></svg>">
+<title>Fiskekalender — GUTTA</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/fiskekalender.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="page-fade fk">
+  <header>
+    <p class="eyebrow">Trondheimsfjorden fra land</p>
+    <h1 class="page-title">🎣 Fiskekalender</h1>
+    <div class="datebar" id="datebar"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="controls stack" id="controls">
+      <section class="fk-card" id="timeCard">
+        <div class="cardhead">
+          <h2>Når fisker du?</h2>
+          <button class="fk-btn primary" id="btnNow" type="button">Nå</button>
+        </div>
+        <p class="note" id="timeLabel"></p>
+        <div class="tl">
+          <div class="tl-wx" id="wxRow" aria-hidden="true" hidden></div>
+          <div class="tl-plot">
+            <div class="tl-chart"><svg id="curve" viewBox="0 0 48 40" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+            <div class="tl-strip" id="strip" aria-hidden="true"></div>
+            <div class="tl-marker" id="marker"></div>
+          </div>
+          <input id="hour" type="range" min="0" max="24" step="0.25" value="12" aria-label="Klokkeslett">
+          <div class="tl-ticks" aria-hidden="true">
+            <span style="left:0%">00</span><span style="left:25%">06</span><span style="left:50%">12</span><span style="left:75%">18</span><span style="left:100%">24</span>
+          </div>
+          <div class="tl-tide" id="tideRow" aria-hidden="true" hidden></div>
+        </div>
+        <div class="legend" id="legend" aria-hidden="true"></div>
+        <p class="note" id="curveNote" style="margin-top:8px"></p>
+      </section>
+
+      <section class="fk-card">
+        <details class="wx" id="wxDetails">
+          <summary>
+            <span class="wxhead"><h2>Været i Trondheim</h2><span class="wxsum" id="wxSum"></span></span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="wxbody" id="wxBody">
+            <p class="note" id="wxSrc"></p>
+            <div class="wxrow">
+              <span class="lbl">Kilde og hurtigvalg</span>
+              <div class="chips" id="presets"></div>
+            </div>
+            <div id="wxFine" class="wxbody" style="margin-top:0">
+              <div class="wxrow">
+                <label for="wind">Vind <output id="windOut"></output></label>
+                <input id="wind" type="range" min="0" max="20" step="0.5" value="4">
+              </div>
+              <div class="wxrow">
+                <span class="lbl">Skyer</span>
+                <div class="chips" id="cloudChips"></div>
+              </div>
+              <div class="wxrow">
+                <span class="lbl">Nedbør</span>
+                <div class="chips" id="rainChips"></div>
+              </div>
+              <div class="wxrow">
+                <label for="temp">Lufttemperatur <output id="tempOut"></output></label>
+                <input id="temp" type="range" min="-15" max="25" step="1" value="8">
+              </div>
+            </div>
+            <p class="note" id="wxNote"></p>
+            <div class="chips">
+              <a class="fk-btn" href="https://www.yr.no/en/forecast/hourly-table/1-557695/Norway/Tr%C3%B8ndelag/Trondheim" target="_blank" rel="noopener">Åpne yr.no</a>
+              <a class="fk-btn" href="https://kartverket.no/en/at-sea/se-havniva/tides-and-water-level/tide-tables" target="_blank" rel="noopener">Tidevann hos Kartverket</a>
+            </div>
+          </div>
+        </details>
+      </section>
+    </aside>
+
+    <div class="stack" id="results">
+      <div class="alerts" id="alerts"></div>
+      <section class="fk-card fk-hero" id="hero" aria-live="polite"></section>
+
+      <section class="fk-card">
+        <div class="cardhead"><h2>Alle alternativer</h2></div>
+        <p class="note" style="margin-bottom:12px">Sortert etter poeng for valgt dag og tidspunkt. Åpne et alternativ for å se fordeler, ulemper, steder og hvorfor det får poengene det får.</p>
+        <div class="optlist" id="optlist"></div>
+      </section>
+
+      <section class="fk-card">
+        <div class="cardhead"><h2>Kalender</h2></div>
+        <p class="note" style="margin-bottom:12px">Mørkere farge betyr bedre sesong. Skravert betyr fredet. Trykk på en måned for å bla dit, og på en dag for å se anbefalingen for den dagen.</p>
+        <div class="smap" id="smap" role="group" aria-label="Sesongkart"></div>
+        <div class="mhead">
+          <button class="fk-btn" id="prevM" type="button" aria-label="Forrige måned">&larr;</button>
+          <h3 id="monthTitle"></h3>
+          <button class="fk-btn" id="nextM" type="button" aria-label="Neste måned">&rarr;</button>
+        </div>
+        <div class="dow-row" aria-hidden="true"><span>man</span><span>tir</span><span>ons</span><span>tor</span><span>fre</span><span>lør</span><span>søn</span></div>
+        <div class="days" id="days"></div>
+        <div class="sel-sum" id="selSum"></div>
+        <p class="mnote" id="monthNote"></p>
+      </section>
+
+      <section class="fk-card">
+        <div class="cardhead"><h2>Regler og sikkerhet</h2></div>
+        <div id="rules"></div>
+      </section>
+
+      <section class="fk-card">
+        <div class="cardhead"><h2>Fiskeplasser fra land</h2></div>
+        <div id="spots"></div>
+      </section>
+
+      <section class="fk-card">
+        <div class="cardhead"><h2>Slik regner siden</h2></div>
+        <div id="algo"></div>
+      </section>
+
+      <div class="foot">
+        <p>Dette er et anslag bygget på fiskeguiden for Trondheimsfjorden (TOFA, Fiskeridirektoratet, Store norske leksikon og flere). Fisket varierer fra år til år, og reglene endres. Sjekk gjeldende regler før du fisker.</p>
+        <p>Værvarsel og sjøtemperatur fra MET Norway (Yr), flo og fjære fra Kartverket. Begge deler data under lisensen CC BY 4.0.</p>
+        <div class="links">
+          <a href="https://www.fiskeridir.no/fritidsfiske" target="_blank" rel="noopener">Fiskeridirektoratet: fritidsfiske</a>
+          <a href="https://www.yr.no/en/forecast/hourly-table/1-557695/Norway/Tr%C3%B8ndelag/Trondheim" target="_blank" rel="noopener">Yr: Trondheim</a>
+          <a href="https://kartverket.no/en/at-sea/se-havniva/tides-and-water-level/tide-tables" target="_blank" rel="noopener">Kartverket: tidevann</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>🎣 GUTTA.NO — skitt fiske! Husk flytevest, og ta med søppelet hjem.</p>
+</footer>
+
+<script src="js/common.js"></script>
+<script src="js/fiskemodell.js"></script>
+<script src="js/fiskekalender.js"></script>
+</body>
+</html>

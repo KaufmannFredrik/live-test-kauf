@@ -1,6 +1,6 @@
 # GUTTA.NO
 
-Gutta sin hjemmebane: et kasino med spill mot AI og en samling festverktøy. Alt er vanlig HTML, CSS og JavaScript,
+Gutta sin hjemmebane: et kasino med spill mot AI, en samling festverktøy og en fiskekalender for Trondheimsfjorden. Alt er vanlig HTML, CSS og JavaScript,
 uten byggesteg, så siden fungerer på GitHub Pages og ved å åpne `index.html` direkte. Alle lyder lages live i
 nettleseren (Web Audio API), og det finnes ingen lyd- eller bildefiler.
 
@@ -17,6 +17,21 @@ nettleseren (Web Audio API), og det finnes ingen lyd- eller bildefiler.
 | `olautomat.html` | Ølautomaten, spilleautomat med 5 linjer, wild og gratisspinn |
 | `hva-skal-vi-na.html`, `drikkeregler.html`, `sjekkereplikk.html`, `olsnake.html`, `lyd-bilder.html` | Festverktøy |
 | `ol-ratings.html`, `bar-ratinger.html` | Ratinger av øl og barer |
+| `fiskekalender.html` | Fiskekalender for Trondheimsfjorden fra land, med vær fra Yr og flo og fjære fra Kartverket |
+
+## Fiskekalenderen
+
+Siden gir poeng fra 0 til 100 til sju fiskemåter ut fra sesong, lys (solhøyden), tidevann (månefasen) og vær.
+Den henter tre ting rett fra nettleseren, uten nøkkel eller server:
+
+- **Timesvarsel fra Yr** (MET Norway, `api.met.no/weatherapi/locationforecast`): vind, skyer, nedbør og temperatur
+  for hvert klokkeslett, opptil ca. ni dager frem.
+- **Sjøtemperatur og bølger** (MET Norway, `oceanforecast`).
+- **Flo og fjære** (Kartverket, `vannstand.kartverket.no/tideapi.php`), én måned om gangen.
+
+Alt lagres i `localStorage`, så varselet bare hentes på nytt når det er over en halvtime gammelt. Du kan også legge
+inn været selv eller regne uten vær. Begge kildene deler data under CC BY 4.0, og siden krediterer dem i bunnen.
+Modellen ligger i `js/fiskemodell.js` (uten DOM, og brukes også av forsiden), grensesnittet i `js/fiskekalender.js`.
 
 ## Vanskelighetsgrader
 

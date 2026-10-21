@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1c0f05">
-<meta name="description" content="Gutta sin hjemmebane: kasino med blackjack, rulett, poker og Meyer mot AI, pluss drikkeregler, ølratinger og Ølsnake.">
+<meta name="description" content="Gutta sin hjemmebane: kasino med blackjack, rulett, poker og Meyer mot AI, pluss drikkeregler, ølratinger, Ølsnake og fiskekalender for Trondheimsfjorden.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
 <title>GUTTA — Fest, Fyll & Fanteri 🍺</title>
 <link rel="stylesheet" href="css/style.css">
@@ -112,6 +112,16 @@
     </a>
   </section>
 
+  <h2 class="section-title">🎣 Ute <small>Trondheimsfjorden fra land · vær fra Yr</small></h2>
+  <section class="grid">
+    <a class="card" href="fiskekalender.html">
+      <div class="icon">🎣</div>
+      <h3>Fiskekalender</h3>
+      <p>Hva biter i Trondheimsfjorden akkurat nå? Sesong, lys, tidevann og været fra Yr gir poeng til sju fiskemåter, med utstyr, plasser og regler.</p>
+      <div class="tags"><span class="tag green" id="hubFish">🎣 Regner ut …</span><span class="tag" id="hubFishWx" style="text-transform:none" hidden></span></div>
+    </a>
+  </section>
+
   <section style="text-align:center; margin-top:60px;">
     <h2 style="color:var(--amber);">Kveldens visdomsord</h2>
     <p id="quoteBox" style="font-size:1.25rem; font-style:italic; max-width:600px; margin:0 auto; line-height:1.5;"></p>
@@ -125,6 +135,7 @@
 </footer>
 
 <script src="js/common.js"></script>
+<script src="js/fiskemodell.js"></script>
 <script>
   const quotes = [
     "\"En øl om dagen holder legen unna. To øl om dagen holder alle unna.\" – Ukjent gutta-filosof",
@@ -151,6 +162,19 @@
   }
   paintWallet();
   document.addEventListener('gutta:wallet', paintWallet);
+
+  // Fiskekalenderen sin beste anbefaling akkurat nå, med været fra Yr når det er hentet.
+  function paintFish() {
+    const n = osloNow(), wx = FiskeVaer.wxAt(toUTC(n.y, n.m, n.d, n.h));
+    const top = rankOptions(makeCtx(n.y, n.m, n.d, n.h, wx))[0];
+    document.getElementById('hubFish').textContent = '🎣 Best nå: ' + top.opt.kort + ' · ' + top.score + '/100';
+    const tag = document.getElementById('hubFishWx');
+    tag.hidden = !wx;
+    if (wx) tag.textContent = wxIcon(wx) + ' ' + wx.temp + ' °C · ' + fmtNum(wx.wind) + ' m/s';
+  }
+  paintFish();
+  FiskeVaer.onChange(paintFish);
+  FiskeVaer.load();
 </script>
 </body>
 </html>
