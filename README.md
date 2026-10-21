@@ -22,6 +22,8 @@ nettleseren (Web Audio API), og det finnes ingen lyd- eller bildefiler.
 ## Fiskekalenderen
 
 Siden gir poeng fra 0 til 100 til sju fiskemåter ut fra sesong, lys (solhøyden), tidevann (månefasen) og vær.
+Du velger dag og klokkeslett, og «Fiskeplassene» rangerer alle plassene i Trondheim for det tidspunktet, med hva du
+bør fiske med der og hvilke arter du kan få.
 Den henter tre ting rett fra nettleseren, uten nøkkel eller server:
 
 - **Timesvarsel fra Yr** (MET Norway, `api.met.no/weatherapi/locationforecast`): vind, skyer, nedbør og temperatur

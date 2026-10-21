@@ -25,8 +25,13 @@
     <aside class="controls stack" id="controls">
       <section class="fk-card" id="timeCard">
         <div class="cardhead">
-          <h2>Når fisker du?</h2>
+          <h2>Når vil du fiske?</h2>
           <button class="fk-btn primary" id="btnNow" type="button">Nå</button>
+        </div>
+        <div class="when">
+          <div class="chips" id="dayChips" role="group" aria-label="Dag"></div>
+          <label class="datepick" for="datePick">Eller velg en dato <input type="date" id="datePick"></label>
+          <div class="chips" id="timeChips" role="group" aria-label="Tid på døgnet"></div>
         </div>
         <p class="note" id="timeLabel"></p>
         <div class="tl">
@@ -90,6 +95,12 @@
       <div class="alerts" id="alerts"></div>
       <section class="fk-card fk-hero" id="hero" aria-live="polite"></section>
 
+      <section class="fk-card" id="plasser">
+        <div class="cardhead"><h2>Fiskeplassene</h2></div>
+        <p class="note" id="spotWhen" style="margin-bottom:12px"></p>
+        <div class="spotlist" id="spotList"></div>
+      </section>
+
       <section class="fk-card">
         <div class="cardhead"><h2>Alle alternativer</h2></div>
         <p class="note" style="margin-bottom:12px">Sortert etter poeng for valgt dag og tidspunkt. Åpne et alternativ for å se fordeler, ulemper, steder og hvorfor det får poengene det får.</p>
@@ -114,11 +125,6 @@
       <section class="fk-card">
         <div class="cardhead"><h2>Regler og sikkerhet</h2></div>
         <div id="rules"></div>
-      </section>
-
-      <section class="fk-card">
-        <div class="cardhead"><h2>Fiskeplasser fra land</h2></div>
-        <div id="spots"></div>
       </section>
 
       <section class="fk-card">

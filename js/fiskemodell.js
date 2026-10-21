@@ -103,18 +103,19 @@ const fmtNum = x => String(x).replace('.', ',');
 
 /* ----- Alternativer ----- */
 const SPOTS = {
-  ostmarkneset: {navn:'Østmarkneset (Tyskerkaia)', notat:'Ladestien. Hard bunn, så bruk billige søkker. TOFA fraråder å spise bunnfisk herfra (renseanlegg i nærheten).'},
-  ilsvikora: {navn:'Ilsvikøra', notat:'Kaien ved Felleskjøpet, ca. 10 m dyp. Mudderbunn og strøm fra Nidelvas kanaler.'},
-  hurtigrutekaia: {navn:'Hurtigrutekaia (Pir 1)', notat:'Mest brukte plass i sentrum. Best på stigende sjø. Sjekk fredningssonen ved Nidelvas munning.'},
-  trolla: {navn:'Trolla (Trollakaia)', notat:'Enkel adkomst. Overhengskant som lett tar fast redskapen.'},
-  storsand: {navn:'Storsand (brygge)', notat:'Mye sild på kveldstid. Bryggen er forbeholdt campinggjester 13. mai til 1. september.', stengt:(m,d)=>inRange(m,d,5,13,9,1)},
-  skansen: {navn:'Skansen (flytebrygger)', notat:'Små agn og artsfiske. Vis hensyn til båttrafikk. Bruk hodelykt om kvelden.'},
-  sjobadet: {navn:'Sjøbadet ved Pirsenteret', notat:'Nær sentrum. Havmus og kloskate etter mørkets frembrudd. Vis hensyn til badende.'},
-  korsvika: {navn:'Korsvika og Ilsvika', notat:'TOFA nevner dem som verdt å undersøke, uten detaljer. Her må du prøve deg frem.'}
+  ostmarkneset: {navn:'Østmarkneset (Tyskerkaia)', kart:'Østmarkneset, Trondheim', notat:'Ladestien. Hard bunn, så bruk billige søkker. TOFA fraråder å spise bunnfisk herfra (renseanlegg i nærheten).'},
+  ilsvikora: {navn:'Ilsvikøra', kart:'Ilsvikøra, Trondheim', notat:'Kaien ved Felleskjøpet, ca. 10 m dyp. Mudderbunn og strøm fra Nidelvas kanaler.'},
+  hurtigrutekaia: {navn:'Hurtigrutekaia (Pir 1)', kart:'Hurtigrutekaia, Trondheim', stigende:true, notat:'Mest brukte plass i sentrum. Best på stigende sjø. Sjekk fredningssonen ved Nidelvas munning.'},
+  trolla: {navn:'Trolla (Trollakaia)', kart:'Trolla, Trondheim', notat:'Enkel adkomst. Overhengskant som lett tar fast redskapen.'},
+  storsand: {navn:'Storsand (brygge)', kart:'Storsand camping, Malvik', notat:'Mye sild på kveldstid. Bryggen er forbeholdt campinggjester 13. mai til 1. september.', stengt:(m,d)=>inRange(m,d,5,13,9,1)},
+  skansen: {navn:'Skansen (flytebrygger)', kart:'Skansen, Trondheim', notat:'Små agn og artsfiske. Vis hensyn til båttrafikk. Bruk hodelykt om kvelden.'},
+  // Havmus og kloskate tas på bunnagn, men bare når det er mørkt.
+  sjobadet: {navn:'Sjøbadet ved Pirsenteret', kart:'Pirsenteret, Trondheim', ekstra:{fisk:['havmus','kloskate'], med:'bunn'}, notat:'Nær sentrum. Havmus og kloskate etter mørkets frembrudd. Vis hensyn til badende.'},
+  korsvika: {navn:'Korsvika og Ilsvika', kart:'Korsvika, Trondheim', notat:'TOFA nevner dem som verdt å undersøke, uten detaljer. Her må du prøve deg frem.'}
 };
 
 const OPTIONS = [
-{ id:'torsk', navn:'Torsk på pilk eller shad', kort:'Torsk', arter:'Torsk, hvitting og hyse', undertekst:'Hele året, størst om vinteren',
+{ id:'torsk', navn:'Torsk på pilk eller shad', kort:'Torsk', arter:'Torsk, hvitting og hyse', fisk:['torsk','hvitting','hyse'], undertekst:'Hele året, størst om vinteren',
   sesong:[.85,.85,.75,.6,.4,.3,.25,.35,.5,.7,.8,.9],
   tid:[.72,.9,1,.95,.9], w50:10, lysSky:true, tide:.85, fredet:null, hensyn:1, farge:'sluk',
   stang:'Allroundstang 9 til 10 fot, kastevekt 15 til 60 g. Flettesnor 0,15 til 0,20 mm og fluorokarbon-forfang 0,35 til 0,45 mm.',
@@ -126,7 +127,7 @@ const OPTIONS = [
   ulemper:['Henger lett fast på hard bunn og stein, så du mister sluk','Sakte fiske som krever tålmodighet','Korte dager og glatte svaber om vinteren','Minstemål 55 cm, så mye fisk må slippes ut','TOFA fraråder å spise bunnfisk fra Østmarkneset'],
   regel:'Minstemål: torsk 55 cm, hyse 40 cm, hvitting 32 cm. Kveite må slippes ut 20. desember til 20. april.' },
 
-{ id:'sei', navn:'Sei og lyr på blankt sluk', kort:'Sei og lyr', arter:'Sei og lyr', undertekst:'Sommer og høst, best morgen og kveld',
+{ id:'sei', navn:'Sei og lyr på blankt sluk', kort:'Sei og lyr', arter:'Sei og lyr', fisk:['sei','lyr'], undertekst:'Sommer og høst, best morgen og kveld',
   sesong:[.1,.1,.1,.15,.3,.55,.7,.85,.9,.85,.55,.2],
   tid:[.65,1,1,.6,.45], w50:9, lysSky:true, tide:.75, fredet:null, hensyn:1, farge:'sluk',
   stang:'Allroundstang 9 til 10 fot, kastevekt 15 til 60 g. Flettesnor 0,15 til 0,20 mm og fluorokarbon-forfang 0,35 til 0,45 mm.',
@@ -138,7 +139,7 @@ const OPTIONS = [
   ulemper:['Fisken kommer i perioder, så det kan være dødt mellom hver stim','Du må lete etter vak og fugler','Sluk tar lett fast på overhengskanter, for eksempel ved Trolla','Lite å hente i vinterhalvåret'],
   regel:'Ingen minstemål på sei og lyr til eget bruk.' },
 
-{ id:'makrell', navn:'Makrell på makrelltakkel', kort:'Makrell', arter:'Makrell', undertekst:'Sommer og tidlig høst',
+{ id:'makrell', navn:'Makrell på makrelltakkel', kort:'Makrell', arter:'Makrell', fisk:['makrell'], undertekst:'Sommer og tidlig høst',
   sesong:[.02,.02,.02,.02,.08,.4,.8,.95,.85,.45,.1,.03],
   tid:[.95,1,.8,.35,.15], w50:8, sunLover:true, tide:.8, fredet:null, hensyn:1, farge:'blank',
   stang:'Allroundstang 9 til 10 fot, kastevekt 15 til 60 g. Flettesnor 0,15 til 0,20 mm.',
@@ -150,7 +151,7 @@ const OPTIONS = [
   ulemper:['Kort sesong, og den varierer fra år til år','Stimen kan stå for langt ute til at du når den','Takkelet floker seg lett','Rot og blod: rydd etter deg og ikke sløy fisk på kaiene'],
   regel:'Ingen minstemål på makrell.' },
 
-{ id:'sild', navn:'Småsild på sildehekler', kort:'Småsild', arter:'Småsild', undertekst:'Sensommer og høst, ofte om kvelden',
+{ id:'sild', navn:'Småsild på sildehekler', kort:'Småsild', arter:'Småsild', fisk:['småsild'], undertekst:'Sensommer og høst, ofte om kvelden',
   sesong:[.15,.1,.05,.05,.1,.2,.4,.7,.8,.6,.4,.2],
   tid:[.55,.85,1,.95,.85], w50:9, tide:.8, fredet:null, hensyn:1, farge:'blank',
   stang:'Allroundstang 9 til 10 fot, kastevekt 15 til 60 g. Flettesnor 0,15 til 0,20 mm.',
@@ -162,7 +163,7 @@ const OPTIONS = [
   ulemper:['Liten fisk','Kort sesong, og mest på kveldstid','Heklene floker seg lett','Storsand-bryggen er reservert campinggjester 13. mai til 1. september'],
   regel:'Ingen minstemål på sild.' },
 
-{ id:'bunn', navn:'Bunnfiske med agn', kort:'Bunnagn', arter:'Hvitting, hyse, torsk og noen ganger kveite', undertekst:'Hele året, best høst og vinter',
+{ id:'bunn', navn:'Bunnfiske med agn', kort:'Bunnagn', arter:'Hvitting, hyse, torsk og noen ganger kveite', fisk:['hvitting','hyse','torsk','kveite'], undertekst:'Hele året, best høst og vinter',
   sesong:[.6,.6,.65,.6,.45,.35,.35,.4,.55,.7,.75,.65],
   tid:[.7,.85,1,1,.95], w50:11, tide:.9, fredet:null, hensyn:1, farge:'agn',
   agn:'Sild- eller makrellbiter til torsk og hvitting, reke eller blåskjell til småfisk. Større kroker til torsk gir mindre fisk under minstemål.',
@@ -170,12 +171,12 @@ const OPTIONS = [
   slukType:'Bunntakkel eller glidende takkel med agn',
   vekt:{normal:[40,70], tung:[70,100]}, vektEtter:' søkke',
   teknikk:'Legg agnet ut og vent. Fisket er best på stigende sjø, men det er trekk i vannet også på fallende sjø. Bruk gjerne hodelykt og finn fisken med lyset ved småbåthavner.',
-  steder:['hurtigrutekaia','storsand','trolla','ilsvikora'],
+  steder:['hurtigrutekaia','storsand','trolla','ilsvikora','sjobadet'],
   fordeler:['Virker hele året, også når sluk gir lite','Rolig fiske: legg ut agnet og vent','Mange arter: hvitting, hyse, torsk, flatfisk og noen ganger kveite','Fungerer fint i mørket'],
   ulemper:['Du må ha ferskt agn: sild, makrell, reke eller blåskjell','Mye småfisk under minstemål som må slippes ut','Lite action mens du venter','Kveite må slippes ut 20. desember til 20. april'],
   regel:'Minstemål: hyse 40 cm, hvitting 32 cm, torsk 55 cm, kveite 84 cm.' },
 
-{ id:'flatfisk', navn:'Flatfisk med reke på bunnen', kort:'Flatfisk', arter:'Rødspette, flyndre, lomre og skrubbe', undertekst:'Sen vår til sommer',
+{ id:'flatfisk', navn:'Flatfisk med reke på bunnen', kort:'Flatfisk', arter:'Rødspette, flyndre, lomre og skrubbe', fisk:['rødspette','flyndre','lomre','skrubbe'], undertekst:'Sen vår til sommer',
   sesong:[.05,.05,.15,.4,.65,.75,.75,.7,.55,.3,.1,.05],
   tid:[.9,.95,.9,.8,.7], w50:11, tide:.95, fredet:null, hensyn:1, farge:'agn',
   agn:'Rekebiter eller blåskjell på små kroker.',
@@ -188,7 +189,7 @@ const OPTIONS = [
   ulemper:['Best når sjøen blir varmere, og dårligere resten av året','Småfisk: rødspette må være minst 29 cm, lysing 30 cm','Lite kamp','Fisk fra havneområder kan inneholde miljøgifter, så sjekk Mattilsynets råd'],
   regel:'Minstemål: rødspette 29 cm, lysing 30 cm.' },
 
-{ id:'sjoorret', navn:'Sjøørret på lite sluk (slipp ut)', kort:'Sjøørret', arter:'Sjøørret', undertekst:'Fredet 1. mars til 31. mai',
+{ id:'sjoorret', navn:'Sjøørret på lite sluk (slipp ut)', kort:'Sjøørret', arter:'Sjøørret', fisk:['sjøørret'], undertekst:'Fredet 1. mars til 31. mai',
   sesong:[.25,.25,0,0,0,.5,.45,.5,.65,.6,.4,.3],
   tid:[.5,.95,1,.85,.7], w50:8, lysSky:true, tide:.85, fredet:[3,1,5,31], hensyn:.75, farge:'orret',
   stang:'Lettere stang på 8 til 9 fot, kastevekt 7 til 28 g. Fluorokarbon-forfang 0,25 til 0,30 mm, ca. 1 til 1,5 m.',
@@ -395,6 +396,37 @@ function activeRules(m, d){
     laks: inRange(m, d, 3, 1, 5, 31),
     storsand: inRange(m, d, 5, 13, 9, 1)
   };
+}
+
+/* ----- Plassene ----- */
+const SPOT_IDS = ['ostmarkneset','hurtigrutekaia','trolla','ilsvikora','storsand','skansen','sjobadet','korsvika'];
+// Hver plass med fiskemåtene som passer der, rangert for tidspunktet i ctx. res er rankOptions(ctx).
+// Like poeng sorteres etter hvor høyt guiden setter plassen for den fiskemåten.
+function rankSpots(ctx, res){
+  const byId = {};
+  res.forEach(r => { byId[r.opt.id] = r; });
+  const dark = ctx.ph === 'morkt' || ctx.ph === 'natt';
+  return SPOT_IDS.map((id, i) => {
+    const s = SPOTS[id], stengt = !!(s.stengt && s.stengt(ctx.m, ctx.d));
+    const opts = OPTIONS.filter(o => o.steder.includes(id)).map(o => byId[o.id])
+      .sort((a, b) => (b.score - a.score) || (a.opt.steder.indexOf(id) - b.opt.steder.indexOf(id)));
+    // Artene du realistisk kan få: fra fiskemåtene som er minst middels og nær den beste her.
+    const best = opts[0] || null, fisk = [], lim = best ? Math.max(30, best.score * 0.6) : 0;
+    opts.forEach(r => { if (r.score >= lim) r.opt.fisk.forEach(f => { if (!fisk.includes(f)) fisk.push(f); }); });
+    const ekstra = !!(s.ekstra && dark && byId[s.ekstra.med].score >= 12);
+    if (ekstra) s.ekstra.fisk.forEach(f => { if (!fisk.includes(f)) fisk.push(f); });
+    return {id, ...s, stengt, opts, best, fisk, ekstra,
+      rank: best && !stengt ? best.score : -1, pref: best ? best.opt.steder.indexOf(id) : 99, i};
+  }).sort((a, b) => (b.rank - a.rank) || (a.pref - b.pref) || (a.i - b.i));
+}
+// Klokkeslettet med høyest poeng for noen fiskemåte i løpet av dagen (ctxs fra dayCtxs).
+function bestTime(ctxs){
+  let best = null;
+  ctxs.forEach(c => {
+    const s = rankOptions(c)[0].score;
+    if (!best || s > best.score) best = {h: c.h, score: s};
+  });
+  return best;
 }
 
 /* ===== Værtekster ===== */

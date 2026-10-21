@@ -27,7 +27,8 @@ const PRESETS = [
 ];
 const CLOUDS = [{v:0, t:'Sol'}, {v:0.5, t:'Delvis skyet'}, {v:1, t:'Overskyet'}];
 const RAINS = [{v:'tort', t:'Tørt'}, {v:'lett', t:'Lett regn'}, {v:'mye', t:'Mye regn'}, {v:'sno', t:'Snø'}];
-const LEGEND = '<span><i style="background:var(--ph0)"></i>Dagslys</span><span><i style="background:var(--ph1)"></i>Lav sol</span>' +
+const TIMES = [{h:7, t:'Morgen'}, {h:12, t:'Midt på dagen'}, {h:16, t:'Ettermiddag'}, {h:20, t:'Kveld'}, {h:23, t:'Natt'}];
+const LEGEND ='<span><i style="background:var(--ph0)"></i>Dagslys</span><span><i style="background:var(--ph1)"></i>Lav sol</span>' +
   '<span><i style="background:var(--ph2)"></i>Skumring</span><span><i style="background:var(--ph3)"></i>Mørkt</span><span><i style="background:var(--ph4)"></i>Natt</span>';
 
 function moonSvg(age, size){
@@ -86,6 +87,24 @@ function renderDatebar(ctx){
       ${wx ? `<div><dt>Vær kl. ${fmtTime(ctx.h)}</dt><dd>${wxIcon(wx)} ${wx.temp} °C<small>${windName(wx.wind)}, ${fmtNum(wx.wind)} m/s</small></dd></div>` : ''}
       ${sea ? `<div><dt>Sjøen</dt><dd class="num">${fmtNum(sea.temp.toFixed(1))} °C${typeof sea.wave === 'number' ? `<small>Bølger ${fmtNum(sea.wave.toFixed(1))} m</small>` : ''}</dd></div>` : ''}
     </dl>`;
+}
+
+// Dagene den neste uka, en datovelger for andre dager, og snarveier til tid på døgnet.
+function renderWhen(ctxs){
+  const {y, m, d} = state.sel, days = [];
+  for (let k = 0; k < 7; k++){
+    const dt = new Date(Date.UTC(state.today.y, state.today.m - 1, state.today.d + k));
+    const cy = dt.getUTCFullYear(), cm = dt.getUTCMonth() + 1, cd = dt.getUTCDate();
+    const w = state.wxMode === 'auto' ? FiskeVaer.wxAt(toUTC(cy, cm, cd, state.hour)) : null;
+    const label = k === 0 ? 'I dag' : k === 1 ? 'I morgen' : DAG[dowOf(cy, cm, cd)].slice(0, 3) + ' ' + cd + '.';
+    days.push(`<button type="button" class="chip" data-day="${cy}-${cm}-${cd}" aria-pressed="${cy === y && cm === m && cd === d}">${label}${w ? ' ' + wxIcon(w) : ''}</button>`);
+  }
+  $('dayChips').innerHTML = days.join('');
+  const iso = y + '-' + pad(m) + '-' + pad(d);
+  if ($('datePick').value !== iso) $('datePick').value = iso;
+  const best = bestTime(ctxs), near = h => Math.abs(state.hour - h) < 0.01;
+  $('timeChips').innerHTML = TIMES.map(t => `<button type="button" class="chip" data-h="${t.h}" aria-pressed="${near(t.h)}">${t.t} ${pad(t.h)}</button>`).join('') +
+    (best && best.score > 0 ? `<button type="button" class="chip best" data-h="${best.h}" aria-pressed="${near(best.h)}">Beste tid ${fmtTime(best.h)}</button>` : '');
 }
 
 function renderTimeline(ctx, top, ctxs, anyWx){
@@ -162,10 +181,54 @@ function renderHero(ctx, res, win, anyWx){
       <div><dt>Vekt</dt><dd>${weightText(o, w)}${w.heavy ? `<small>Litt tyngre i dag: ${w.why}.</small>` : ''}</dd></div>
       <div><dt>${colorLabel}</dt><dd>${colorAdvice(o, ctx)}</dd></div>
       <div><dt>Teknikk</dt><dd>${o.teknikk}</dd></div>
-      <div><dt>Plass</dt><dd>${spots.length ? spots.map(s => `<b>${s.navn}</b>`).join(' eller ') : 'Brygger og svaberg. Guiden har ingen faste plasser for denne arten.'}${wx && wx.wind >= 8 ? '<small>Vind mot land gir bølger og tang på linen, så velg et sted der vinden ikke står rett inn.</small>' : ''}</dd></div>
+      <div><dt>Plass</dt><dd>${spots.length ? spots.map(s => `<b>${s.navn}</b>`).join(' eller ') : 'Brygger og svaberg. Guiden har ingen faste plasser for denne arten.'}${wx && wx.wind >= 8 ? '<small>Vind mot land gir bølger og tang på linen, så velg et sted der vinden ikke står rett inn.</small>' : ''}<small><a href="#plasser">Se alle plassene for dette tidspunktet</a></small></dd></div>
     </dl>
     <div class="pack"><h4>Pakkeliste</h4>${pack}</div>
     <div class="next"><span>Deretter:</span>${next}</div>`;
+}
+
+// Alle plassene for valgt tidspunkt: beste fiskemåte der, utstyret, og hva du kan få.
+function renderSpotList(ctx, res){
+  const rl = activeRules(ctx.m, ctx.d), tide = FiskeVaer.tideAt(ctx.y, ctx.m, ctx.d, ctx.h);
+  const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+  const fishName = f => cap(f === 'kveite' ? (rl.kveite ? 'kveite (må slippes ut nå)' : 'kveite (sjelden)') : f);
+  const firstSentence = t => t.split('. ')[0].replace(/\.$/, '');
+  const mapUrl = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  $('spotWhen').innerHTML = `Rangert for <b>${whenLabel(ctx)}</b>` +
+    (ctx.wx ? ` · ${wxIcon(ctx.wx)} ${ctx.wx.temp} °C, ${fmtNum(ctx.wx.wind)} m/s` : '') +
+    (tide ? ` · sjøen ${tide.rising ? 'stiger' : 'faller'}` : '') +
+    '. Velg dag og klokkeslett under «Når vil du fiske?» for å se et annet tidspunkt.';
+  $('spotList').innerHTML = rankSpots(ctx, res).map((s, i) => {
+    const b = s.best, live = !!b && !s.stengt, top = i === 0 && live && b.score >= 12;
+    let med;
+    if (!b) med = `Guiden har ingen detaljer herfra, så her må du prøve deg frem. Best ellers nå er ${res[0].opt.navn.toLowerCase()}.`;
+    else {
+      const o = b.opt;
+      med = `<b>${o.navn}</b><small>${o.slukType}, ${weightText(o, pickWeight(o, ctx))}. ${o.farge === 'agn' ? 'Agn' : 'Farge'}: ${firstSentence(colorAdvice(o, ctx)).toLowerCase()}.</small>`;
+    }
+    const fisk = s.fisk.length ? `<span class="fishchips">${s.fisk.map(f => `<span>${fishName(f)}</span>`).join('')}</span>`
+      : b ? 'Lite å hente her nå.' : 'Ukjent, guiden sier ikke hva som tas her.';
+    const others = s.opts.slice(1).filter(r => r.score >= 12).map(r => `<span>${r.opt.kort} <b class="num">${r.score}</b></span>`).join('');
+    const flags = [];
+    if (s.stengt) flags.push(['stop', 'Bryggen er bare for campinggjester nå']);
+    if (s.stigende && tide) flags.push(tide.rising ? ['ok', 'Sjøen stiger nå, og det er best her'] : ['', `Best på stigende sjø, som starter ved fjære kl. ${fmtTime(tide.next.h)}`]);
+    if (s.ekstra) flags.push(['ok', 'Mørkt nå: havmus og kloskate kan ta bunnagnet']);
+    return `<article class="spot${top ? ' top' : ''}${live ? '' : ' off'}">
+      <div class="spot-head">
+        <div class="spot-name"><h3>${s.navn}</h3>${top ? '<span class="rk">Beste plass</span>' : ''}</div>
+        <div class="sc"><b>${live ? b.score : '–'}</b><small>${s.stengt ? 'Stengt' : b ? verdict(b.score, b.f.closed) : 'Uprøvd'}</small></div>
+      </div>
+      <div class="bar"><i style="width:${live ? b.score : 0}%"></i></div>
+      <dl class="spot-dl">
+        <div><dt>Fisk med</dt><dd>${med}</dd></div>
+        <div><dt>Du kan få</dt><dd>${fisk}</dd></div>
+        ${others ? `<div><dt>Også her</dt><dd class="also">${others}</dd></div>` : ''}
+      </dl>
+      ${flags.length ? `<div class="flags">${flags.map(([c, t]) => `<span class="flag ${c}">${t}</span>`).join('')}</div>` : ''}
+      <p class="note">${s.notat}</p>
+      <a class="maplink" href="${mapUrl(s.kart)}" target="_blank" rel="noopener">Vis i kart ↗</a>
+    </article>`;
+  }).join('');
 }
 
 function factorRows(r){
@@ -269,13 +332,6 @@ function renderRules(ctx){
     item('Sikkerhet', `<ul class="plain"><li>Bruk flytevest på svaberg og kaier, og alltid hvis du er alene eller i mørket.</li><li>Sko med godt grep, og brodder om vinteren. Gå ikke ut på tang eller våte steiner.</li><li>Sjekk tidevann og vind før du går ned til vannet, for flo kan stenge veien tilbake.</li><li>Fortell noen hvor du fisker. Ha mobilen i en vanntett pose og hodelykt med ekstra batterier.</li></ul>`, false) +
     item('Miljø og mat', `<ul class="plain"><li>Ta med søppel og slitt line, og la ikke fiskeslo eller blod ligge på kaiene.</li><li>Fisk fra havneområder kan inneholde miljøgifter. Sjekk Mattilsynets råd før du spiser fisk fra havnebassenget.</li><li>TOFA fraråder å spise flatfisk og bunnfisk fra Østmarkneset.</li></ul>`, false);
 }
-function renderSpots(){
-  const order = ['ostmarkneset','hurtigrutekaia','trolla','ilsvikora','storsand','skansen','sjobadet','korsvika'];
-  $('spots').innerHTML = order.map(id => {
-    const s = SPOTS[id], best = OPTIONS.filter(o => o.steder.includes(id)).map(o => o.kort).join(', ');
-    return `<details class="acc"><summary><span>${s.navn}</span><span class="chev" aria-hidden="true"></span></summary><div class="accb"><p>${s.notat}</p>${best ? `<p class="note">Passer til: ${best}</p>` : ''}</div></details>`;
-  }).join('');
-}
 function renderAlgo(ctx, top){
   const f = top.f;
   $('algo').innerHTML = `
@@ -343,9 +399,11 @@ function render(force){
   const wxf = wxFn(y, m, d), ctx = makeCtx(y, m, d, state.hour, wxf(state.hour)), res = rankOptions(ctx), ctxs = dayCtxs(y, m, d, wxf);
   const anyWx = ctxs.some(c => c.wx);
   renderDatebar(ctx);
+  renderWhen(ctxs);
   const win = renderTimeline(ctx, res[0], ctxs, anyWx);
   renderAlerts(ctx);
   renderHero(ctx, res, win, anyWx);
+  renderSpotList(ctx, res);
   renderRanking(ctx, res);
   renderSeasonMap();
   renderMonth();
@@ -375,12 +433,26 @@ function useYr(){
 }
 
 function init(){
-  buildChips(); renderSpots();
+  buildChips();
   const wide = window.matchMedia && window.matchMedia('(min-width: 900px)').matches;
   if (wide) $('wxDetails').open = true;
 
   $('hour').addEventListener('input', e => { state.hour = +e.target.value; state.follow = false; render(); });
   $('btnNow').addEventListener('click', goNow);
+  $('dayChips').addEventListener('click', e => {
+    const b = e.target.closest('[data-day]'); if (!b) return;
+    const [y, m, d] = b.dataset.day.split('-').map(Number);
+    setDate(y, m, d);
+  });
+  $('datePick').addEventListener('change', e => {
+    const v = /^(\d+)-(\d+)-(\d+)$/.exec(e.target.value);
+    if (v) setDate(+v[1], +v[2], +v[3]);
+  });
+  $('timeChips').addEventListener('click', e => {
+    const b = e.target.closest('[data-h]'); if (!b) return;
+    state.hour = +b.dataset.h; state.follow = false;
+    render();
+  });
   $('presets').addEventListener('click', e => {
     const b = e.target.closest('[data-p]'); if (!b) return;
     const p = PRESETS.find(x => x.id === b.dataset.p);
