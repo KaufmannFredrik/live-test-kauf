@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe1">
+<meta name="description" content="Fiskeartene du kan få fra land i Trondheimsfjorden: kobberstikk og fotografier, systematikk, kjennetegn, størrelse, regler og hvor de tas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M6 32c9-11 22-15 34-10l12-8-3 18 3 18-12-8C28 47 15 43 6 32z' fill='%23f5efe1' stroke='%23211b14' stroke-width='3'/><circle cx='18' cy='29' r='2.5' fill='%23211b14'/></svg>">
+<title>Artene — Fiskene i Trondheimsfjorden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+SC:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/fiske.css">
+<link rel="stylesheet" href="css/kalender.css">
+<link rel="stylesheet" href="css/arter.css">
+</head>
+<body>
+
+<a class="skip" href="#artGrid">Hopp til artene</a>
+<div id="masthead"></div>
+
+<main class="fk fa">
+  <header class="fa-head">
+    <p class="eyebrow">Pars II · Catalogus piscium</p>
+    <h1 class="page-title">Artene</h1>
+    <p class="lead">Tretti arter du kan få fra land i Trondheim, med kjennetegn, systematikk og hva fiskeguiden TOFA sier om dem. Trykk på en art for å lese mer. Bryteren øverst viser fiskene som gamle kobberstikk eller som fotografier.</p>
+  </header>
+
+  <section class="fa-tools">
+    <input type="search" id="artQ" placeholder="Søk på art, latinsk navn, familie eller plass" aria-label="Søk blant fiskeartene" autocomplete="off">
+    <div class="fa-tool-row">
+      <div class="pick"><span class="lbl">Gruppe</span><div class="chips" id="artGroups" role="group" aria-label="Gruppe"></div></div>
+      <div class="pick"><span class="lbl">Ordne</span><div class="chips" id="artOrden" role="group" aria-label="Rekkefølge"></div></div>
+    </div>
+    <p class="note" id="artCount" aria-live="polite"></p>
+  </section>
+
+  <div class="fa-grid" id="artGrid"></div>
+
+  <div class="foot">
+    <p>Faktaene er fra Store norske leksikon, med unntak av lysing (Havforskningsinstituttet) og tangkutling (MarLIN). Systematikken og autorene er fra WoRMS (World Register of Marine Species). Plassene er fra fiskeguiden for Trondheimsfjorden (TOFA). Kobberstikkene er fra Bloch (1783 til 1801), Couch (1877) og Richard (1907), og navnet på hver plansje er lest av selve stikket. Fotografiene har fotograf og lisens under bildet. Alle bildene er fra Wikimedia Commons.</p>
+    <div class="links">
+      <a href="https://snl.no/" target="_blank" rel="noopener">Store norske leksikon</a>
+      <a href="https://www.marinespecies.org/" target="_blank" rel="noopener">WoRMS</a>
+      <a href="https://www.fiskeridir.no/fritidsfiske" target="_blank" rel="noopener">Fiskeridirektoratet: fritidsfiske</a>
+      <a href="kalender.html#ordliste">Ordlisten</a>
+    </div>
+  </div>
+</main>
+
+<dialog class="fk fa fa-dlg" id="artDlg" aria-labelledby="dlgName">
+  <div class="fa-dlg-bar">
+    <button class="fk-btn" id="dlgPrev" type="button" aria-label="Forrige art">&larr;</button>
+    <span class="note" id="dlgPos"></span>
+    <button class="fk-btn" id="dlgNext" type="button" aria-label="Neste art">&rarr;</button>
+    <button class="fk-btn fa-close" id="dlgClose" type="button" aria-label="Lukk">Lukk</button>
+  </div>
+  <article id="dlgBody"></article>
+</dialog>
+
+<footer class="colophon">Skitt fiske. Husk flytevest, og ta med søppelet hjem.</footer>
+
+<script src="js/felles.js"></script>
+<script src="js/fiskemodell.js"></script>
+<script src="js/arter.js"></script>
+<script src="js/artene.js"></script>
+</body>
+</html>

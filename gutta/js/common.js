@@ -464,8 +464,8 @@ function drinkPrompt(title, sub) {
    MENY — bygges fra én liste, så alle sider er like.
    ========================================================= */
 const SITE_NAV = [
+  { href: '../index.html', label: 'Start' },
   { href: 'index.html', label: 'Hjem' },
-  { href: 'fiskekalender.html', label: 'Fiske' },
   { label: 'Kasino', items: [
     { href: 'kasino.html', label: 'Kasino-lobby', icon: '🪙' },
     { href: 'blackjack.html', label: 'Blackjack', icon: '🃏' },

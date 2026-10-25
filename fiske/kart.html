@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe1">
+<meta name="description" content="Kart over fiskeplassene i Trondheim: sjøkart fra Kartverket, munningsfredningssonene, og for hver plass poeng, arter, dybde og åpent vann.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M6 32c9-11 22-15 34-10l12-8-3 18 3 18-12-8C28 47 15 43 6 32z' fill='%23f5efe1' stroke='%23211b14' stroke-width='3'/><circle cx='18' cy='29' r='2.5' fill='%23211b14'/></svg>">
+<title>Kart — Fiskene i Trondheimsfjorden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+SC:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="css/fiske.css">
+<link rel="stylesheet" href="css/kart.css">
+</head>
+<body>
+
+<a class="skip" href="#panel">Hopp til registeret</a>
+<div id="masthead"></div>
+
+<main class="fk kartside">
+  <header class="kart-head">
+    <p class="eyebrow">Pars III · Tabula geographica</p>
+    <h1 class="page-title">Kart over fiskeplassene</h1>
+    <p class="lead">De seks plassene fiskeguiden TOFA beskriver i Trondheim, på sjøkartet fra Kartverket. Fargen viser hvor godt fisket ser ut nå. Trykk på en plass for dybde, åpent vann, arter og regler.</p>
+  </header>
+
+  <div class="kart-wrap">
+    <div class="kart-frame"><div id="kart" role="region" aria-label="Kart over fiskeplassene"></div></div>
+
+    <aside class="fk-card panel" id="panel">
+      <div class="when2">
+        <label for="tid"><span class="lbl">Tidspunkt</span> <output id="tidOut"></output></label>
+        <div class="tidrow">
+          <input type="range" id="tid" min="0" max="24" step="0.25" aria-label="Klokkeslett i dag">
+          <button class="fk-btn" id="btnNa" type="button">Nå</button>
+        </div>
+        <p class="note" id="forhold"></p>
+      </div>
+      <div id="liste">
+        <h2>Register over plassene</h2>
+        <ol class="register" id="register"></ol>
+        <p class="note">Nummerert fra vest mot øst. Poengene er de samme som i <a href="kalender.html">kalenderen</a>, for den beste fiskemåten på hver plass.</p>
+      </div>
+      <article class="detalj" id="detalj" hidden></article>
+    </aside>
+  </div>
+
+  <div class="foot">
+    <p>Sjøkart og kart fra Kartverket. Munningsfredningssonene er fra kartdataene til Statsforvalteren i Trøndelag (forskrift 18. juni 2024 nr. 1098). Dybden og åpent vann er målt i dybdedataene til Kartverket, vær og sjøtemperatur er fra MET Norway (Yr), og flo og fjære fra Kartverket. Alle deler data under CC BY 4.0.</p>
+    <div class="links">
+      <a href="https://www.statsforvalteren.no/nb/trondelag/" target="_blank" rel="noopener">Statsforvalteren i Trøndelag</a>
+      <a href="https://kartverket.no/" target="_blank" rel="noopener">Kartverket</a>
+      <a href="kalender.html#rules">Regler og sikkerhet</a>
+    </div>
+  </div>
+</main>
+
+<footer class="colophon">Skitt fiske. Husk flytevest, og ta med søppelet hjem.</footer>
+
+<script src="js/felles.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="js/fiskemodell.js"></script>
+<script src="js/arter.js"></script>
+<script src="js/soner.js"></script>
+<script src="js/kart.js"></script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 /* =========================================================
-   GUTTA.NO — fiskemodell.js
+   FISKE — fiskemodell.js
    Kjernen i fiskekalenderen: sol, måne, tidevann og poeng for
    hver fiskemåte i Trondheimsfjorden. Ingen DOM her, så både
-   fiskekalender.html og forsiden bruker samme modell.
+   kalender.html, kartet og oversikten bruker samme modell.
    FiskeVaer (nederst) henter timesvarsel fra Yr (MET Norway),
    sjøtemperatur (MET Norway) og flo og fjære (Kartverket).
-   Krever Store fra js/common.js.
+   Krever Store fra js/felles.js.
    ========================================================= */
 
 /* ===== Dato, sol og måne ===== */

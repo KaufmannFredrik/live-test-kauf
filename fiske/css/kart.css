@@ -1,0 +1,112 @@
+/* =========================================================
+   FISKE — kart.css
+   Kartsiden. Kartet har en dobbel ramme som et gammelt
+   kartblad, og registeret over plassene står ved siden av.
+   ========================================================= */
+
+.kart-head { margin-bottom: 20px; }
+.kart-head .lead { margin-top: 6px; }
+.kart-wrap { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) {
+  .kart-wrap { grid-template-columns: minmax(0, 1fr) 380px; align-items: start; }
+  .panel { position: sticky; top: calc(var(--mast-h) + 16px); max-height: calc(100vh - var(--mast-h) - 32px); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--rule-ink) transparent; }
+}
+.kart-frame { border: 1px solid var(--ink); padding: 4px; background: var(--card); }
+.kart-frame > div { border: 1px solid var(--rule-ink); }
+#kart { height: max(520px, calc(100vh - var(--mast-h) - 80px)); background: var(--paper-2); }
+@media (max-width: 899px) { #kart { height: 64vh; min-height: 380px; } }
+
+/* Kartet i papirfarger */
+.kartside .leaflet-tile-pane { filter: sepia(.22) saturate(.8) contrast(.97); }
+.kartside .leaflet-control-layers { background: var(--card); border: 1px solid var(--ink) !important; border-radius: 2px; box-shadow: none; color: var(--ink-2); font-size: .88rem; }
+.kartside .leaflet-control-layers-toggle { width: 34px; height: 34px; background-size: 20px; }
+.kartside .leaflet-control-layers-separator { border-top-color: var(--rule); }
+.kartside .leaflet-popup-content-wrapper { background: var(--card); color: var(--ink-2); border: 1px solid var(--ink); border-radius: 2px; box-shadow: none; font-size: .9rem; }
+.kartside .leaflet-popup-tip { background: var(--card); border: 1px solid var(--ink); box-shadow: none; }
+.kartside .leaflet-popup-content b { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); }
+.kartside .leaflet-container a.leaflet-popup-close-button { color: var(--ink-3); }
+.sone { cursor: help; }
+
+/* Plassene: nummererte merker, fylt med fargen til poengene */
+.pin { background: none; border: 0; }
+.pin span {
+  display: grid; place-items: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  box-shadow: 0 0 0 2px rgba(250, 246, 236, 0.9);
+  font: 600 1.05rem/1 var(--serif);
+  color: var(--ink);
+  transition: transform .15s ease;
+}
+.pin.dark span { color: var(--paper); }
+.pin:hover span { transform: scale(1.1); }
+.pin.on span { border-color: var(--rubric); box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--rubric); transform: scale(1.15); }
+
+.legend-box { background: rgba(250, 246, 236, 0.94); border: 1px solid var(--ink); border-radius: 2px; padding: 8px 10px; display: grid; gap: 3px; font-size: .78rem; color: var(--ink-2); max-width: 220px; }
+.legend-box b { font-family: var(--serif-sc); font-weight: 600; font-size: .95rem; letter-spacing: .05em; color: var(--ink); }
+.legend-box span { display: flex; align-items: center; gap: 7px; }
+.legend-box i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--ink); flex: none; }
+.legend-box i.z1, .legend-box i.z2 { border-radius: 1px; }
+.legend-box i.z1 { background: rgba(155, 53, 34, 0.25); border-color: #9b3522; }
+.legend-box i.z2 { background: rgba(201, 164, 106, 0.25); border: 1px dashed #8a5f36; }
+@media (max-width: 560px) { .legend-box { font-size: .72rem; max-width: 180px; } }
+
+/* Panelet */
+.panel { padding: 18px 20px; }
+.when2 { display: grid; gap: 6px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--rule); }
+.when2 label { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.when2 .lbl { font-family: var(--serif-sc); font-weight: 600; font-size: 1rem; letter-spacing: .06em; color: var(--sepia); }
+.when2 output { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tidrow { display: flex; align-items: center; gap: 10px; }
+.tidrow .fk-btn { min-height: 30px; padding: 3px 12px; }
+#liste h2, .detalj h2 { margin-bottom: 8px; }
+.register { list-style: none; margin: 0 0 10px; padding: 0; border-top: 1px solid var(--ink); }
+.register li { border-bottom: 1px solid var(--rule); }
+.reg {
+  appearance: none; width: 100%; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; text-align: left;
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 4px;
+}
+.reg:hover { background: var(--paper-2); }
+.reg.on { background: var(--olive-soft); }
+.reg .fig { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; color: var(--sepia); text-align: center; }
+.reg .rn b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.12rem; color: var(--ink); line-height: 1.2; }
+.reg small { display: block; color: var(--ink-3); font-size: .82rem; }
+.reg .rs { text-align: right; }
+.reg .rs b { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; line-height: 1; color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
+.reg .rs small { font-family: var(--serif); font-style: italic; font-size: .9rem; }
+
+/* Én plass */
+.detalj { display: grid; gap: 10px; }
+.detalj .tilbake { justify-self: start; min-height: 30px; padding: 3px 12px; font-size: .84rem; }
+.detalj .eyebrow { margin-top: 4px; font-size: .9rem; }
+.detalj h2 { font-size: 1.85rem; font-weight: 500; }
+.dscore { display: flex; align-items: center; gap: 14px; padding: 8px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.dscore .big { font-family: var(--serif); font-weight: 500; font-size: 3.4rem; line-height: .9; color: var(--ink); }
+.dscore b { display: block; color: var(--ink); }
+.dscore small { color: var(--ink-3); font-size: .86rem; }
+.ddl { margin: 0; display: grid; gap: 8px; }
+.ddl > div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 2px 10px; }
+.ddl dt { font-family: var(--serif-sc); font-weight: 600; font-size: .95rem; letter-spacing: .04em; color: var(--sepia); }
+.ddl dd { margin: 0; font-size: .93rem; }
+.ddl small { display: block; color: var(--ink-3); margin-top: 2px; font-size: .84rem; }
+.ddl .warnline { color: var(--rubric); }
+.detalj h4 { margin: 8px 0 0; }
+.detalj table td:first-child { color: var(--ink-2); }
+.roses { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; }
+.rose { margin: 0; text-align: center; }
+.rose svg { display: block; overflow: visible; }
+.rose figcaption { font-family: var(--serif); font-style: italic; font-size: .95rem; color: var(--ink-3); margin-top: -4px; }
+.rose .sp { stroke: var(--rule-2); stroke-width: .6; }
+.rose .sp.main { stroke: var(--rule); stroke-width: .8; }
+.rose .rr { fill: none; stroke: var(--rule); stroke-width: .6; stroke-dasharray: 2 2; }
+.rose .rt { font: 7.5px var(--sans); fill: var(--ink-3); }
+.rose .fp { fill: url(#hatch); stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; }
+.rose .ht { stroke: var(--olive); stroke-width: 1; }
+.rose .cd { font: 600 11px var(--serif); fill: var(--ink-2); text-anchor: middle; dominant-baseline: central; }
+.rose .wa { stroke: var(--rubric); stroke-width: 2; }
+.rose .wh { fill: var(--rubric); }
+.rose .ctr { fill: var(--ink); }
+.rules li { padding-left: 14px; position: relative; font-size: .93rem; }
+.rules li::before { content: "§"; position: absolute; left: 0; color: var(--rubric); font-family: var(--serif); }
+.tofa { font-family: var(--serif); font-size: 1.08rem; line-height: 1.45; color: var(--ink-2); border-left: 2px solid var(--sepia); padding-left: 12px; }
+.dact { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }

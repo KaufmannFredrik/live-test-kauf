@@ -3,22 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1c0f05">
+<meta name="theme-color" content="#f5efe1">
 <meta name="description" content="Fiskekalender for Trondheimsfjorden fra land: hva biter nå, med vær fra Yr, flo og fjære fra Kartverket, utstyr, plasser og regler.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎣</text></svg>">
-<title>Fiskekalender — GUTTA</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/fiskekalender.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M6 32c9-11 22-15 34-10l12-8-3 18 3 18-12-8C28 47 15 43 6 32z' fill='%23f5efe1' stroke='%23211b14' stroke-width='3'/><circle cx='18' cy='29' r='2.5' fill='%23211b14'/></svg>">
+<title>Fiskekalender — Fiskene i Trondheimsfjorden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+SC:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="css/fiske.css">
+<link rel="stylesheet" href="css/kalender.css">
 </head>
 <body>
 
-<div id="site-header"></div>
+<a class="skip" href="#results">Hopp til anbefalingen</a>
+<div id="masthead"></div>
 
-<main class="page-fade fk">
+<main class="fk">
   <header>
-    <p class="eyebrow">Trondheimsfjorden fra land</p>
-    <h1 class="page-title">🎣 Fiskekalender</h1>
+    <p class="eyebrow">Pars I · Trondheimsfjorden fra land</p>
+    <h1 class="page-title">Fiskekalender</h1>
     <div class="datebar" id="datebar"></div>
   </header>
 
@@ -29,7 +33,7 @@
           <h2>Planlegg turen</h2>
           <button class="fk-btn primary" id="btnNow" type="button">Nå</button>
         </div>
-        <p class="note" style="margin-bottom:10px">Velg det du vil bestemme selv. «Beste» lar siden finne det som passer best.</p>
+        <p class="note" style="margin-bottom:10px">Velg det du vil bestemme selv. «Beste» lar siden finne det som passer best. Usikker på et ord? Se <a href="#ordliste">ordlisten</a>. Vil du vite mer om fisken? Se <a href="arter.html">artene</a>.</p>
         <p class="plansum" id="planSum" aria-live="polite"></p>
         <div class="when">
           <div class="pick"><span class="lbl">Dag</span>
@@ -120,7 +124,7 @@
       </section>
     </aside>
 
-    <div class="stack" id="results">
+    <div class="stack chapters" id="results">
       <div class="alerts" id="alerts"></div>
       <section class="fk-card fk-hero" id="hero" aria-live="polite"></section>
 
@@ -157,6 +161,17 @@
         <div id="rules"></div>
       </section>
 
+      <section class="fk-card" id="ordliste">
+        <div class="cardhead"><h2>Ordliste</h2></div>
+        <p class="note" style="margin-bottom:12px">Fiskeordene og forkortelsene som brukes på siden. Søk, eller velg et tema. Bildene er fra Wikimedia Commons: gamle kobberstikk eller fotografier, etter bryteren øverst på siden, med kilde og lisens under hvert bilde. Trykk på et bilde for å se originalen.</p>
+        <div class="gloss-tools">
+          <input type="search" id="glossQ" placeholder="Søk, for eksempel «springflo» eller «pilk»" aria-label="Søk i ordlisten" autocomplete="off">
+          <div class="chips" id="glossCats" role="group" aria-label="Tema"></div>
+        </div>
+        <p class="note" id="glossCount" aria-live="polite"></p>
+        <div class="gloss" id="glossList"></div>
+      </section>
+
       <section class="fk-card">
         <div class="cardhead"><h2>Slik regner siden</h2></div>
         <div id="algo"></div>
@@ -175,13 +190,13 @@
   </div>
 </main>
 
-<footer>
-  <p>🎣 GUTTA.NO — skitt fiske! Husk flytevest, og ta med søppelet hjem.</p>
-</footer>
+<footer class="colophon">Skitt fiske. Husk flytevest, og ta med søppelet hjem.</footer>
 
-<script src="js/common.js"></script>
+<script src="js/felles.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="js/fiskemodell.js"></script>
-<script src="js/fiskekalender.js"></script>
+<script src="js/arter.js"></script>
+<script src="js/kalender.js"></script>
+<script src="js/ordliste.js"></script>
 </body>
 </html>

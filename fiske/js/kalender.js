@@ -1,5 +1,5 @@
 /* =========================================================
-   GUTTA.NO — fiskekalender.js
+   FISKE — kalender.js
    Grensesnittet til fiskekalenderen. Modellen (sol, måne, poeng)
    og hentingen av vær, sjø og tidevann ligger i js/fiskemodell.js.
    ========================================================= */
@@ -251,7 +251,7 @@ function renderTimeline(ctx, plan, ctxs, anyWx, dayP, sel){
   const past = isToday() ? (osloNow().h * 2).toFixed(2) : 0;
   $('curve').innerHTML = `<polygon points="0,40 ${pts} 48,40" fill="var(--heat)" opacity=".28"/><polyline points="${pts}" fill="none" stroke="var(--heat)" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>` +
     (own !== pts ? `<polyline points="${own}" fill="none" stroke="var(--ink2)" stroke-width="1.2" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>` : '') +
-    (past > 0 ? `<rect x="0" y="0" width="${past}" height="40" fill="rgba(0,0,0,.3)"/>` : '');
+    (past > 0 ? `<rect x="0" y="0" width="${past}" height="40" fill="var(--past)"/>` : '');
   $('marker').style.left = (state.hour / 24 * 100) + '%';
 
   // Været hver tredje time over kurven, og flo og fjære under.
@@ -385,7 +385,9 @@ function renderSpotList(ctx, spots){
       const o = b.opt;
       med = `<b>${o.navn}</b><small>${o.slukType}, ${weightText(o, weightFor(o, s, ctx))}. ${o.farge === 'agn' ? 'Agn' : 'Farge'}: ${firstSentence(colorAdvice(o, ctx)).toLowerCase()}.</small>`;
     }
-    const fisk = s.fisk.length ? `<span class="fishchips">${s.fisk.map(f => `<span>${fishName(f)}</span>`).join('')}</span>`
+    // Hver art lenker til siden med fiskeartene.
+    const chip = f => { const href = typeof artHref === 'function' && artHref(f); return href ? `<a href="${href}" title="Les om ${f}">${fishName(f)}</a>` : `<span>${fishName(f)}</span>`; };
+    const fisk = s.fisk.length ? `<span class="fishchips">${s.fisk.map(chip).join('')}</span>`
       : b ? 'Lite å hente her nå.' : 'Ukjent, guiden sier ikke hva som tas her.';
     const others = s.opts.filter(r => r !== b && r.ok && r.score >= VERDICT.svakt).map(r => `<span>${r.opt.kort} <b class="num">${r.score}</b></span>`).join('');
     const flags = [];
@@ -425,11 +427,7 @@ function renderSpotList(ctx, spots){
 // Kartet over plassene, med fargen etter poengene nå. Trykk på en plass for å velge den.
 let spotMap = null;
 const spotMarkers = {};
-function scoreColor(e){
-  if (!e || !e.ok || e.f.closed) return '#5b4a3b';
-  const s = e.score;
-  return s >= VERDICT.veldig ? '#ffd166' : s >= VERDICT.bra ? '#f4a825' : s >= VERDICT.middels ? '#c2772c' : '#7a5a3a';
-}
+function scoreColor(e){ return poengFarge(e && e.ok && !e.f.closed ? e.score : null); }
 function renderMap(spots){
   const el = $('spotMap');
   if (!window.L){ el.classList.add('none'); return; }
@@ -443,7 +441,7 @@ function renderMap(spots){
   }
   spots.forEach(s => {
     const e = s.stengt ? null : s.best, chosen = state.spot === s.id;
-    const style = {radius: chosen ? 12 : 9, color: chosen ? '#fff8e7' : '#1c0f05', weight: chosen ? 3 : 2, fillColor: scoreColor(e), fillOpacity: 0.95};
+    const style = {radius: chosen ? 11 : 8, color: chosen ? '#9b3522' : '#211b14', weight: chosen ? 2.5 : 1.5, fillColor: scoreColor(e), fillOpacity: 0.95};
     let mk = spotMarkers[s.id];
     if (!mk){
       mk = spotMarkers[s.id] = L.circleMarker(s.pos, style).addTo(spotMap);
@@ -747,7 +745,7 @@ function init(){
     const url = shareUrl(lastPlan), note = $('shareNote');
     const show = () => { note.innerHTML = 'Kopier lenken: <a href="' + url + '">' + url.replace(/&/g, '&amp;') + '</a>'; };
     if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(url).then(() => { note.textContent = 'Lenken til planen er kopiert. Send den til gutta.'; }, show);
+      navigator.clipboard.writeText(url).then(() => { note.textContent = 'Lenken til planen er kopiert. Send den til de du skal fiske med.'; }, show);
     } else show();
   });
   $('spotList').addEventListener('click', e => {

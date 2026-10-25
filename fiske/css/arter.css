@@ -1,0 +1,112 @@
+/* =========================================================
+   FISKE — arter.css
+   Registeret over artene: nummererte eksemplarer i et rutenett,
+   og en rute med plansjen, en museumsetikett med systematikken
+   og faktaene. Bygger på fiske.css og kalender.css (smap).
+   ========================================================= */
+
+.fa-head { margin-bottom: 22px; }
+.fa-head .lead { margin-top: 6px; }
+
+/* Søk og valg */
+.fa-tools { display: grid; gap: 12px; margin-bottom: 24px; padding: 14px 0 16px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.fa-tool-row { display: flex; flex-wrap: wrap; gap: 12px 34px; }
+
+/* Rutenettet */
+.fa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; margin-bottom: 18px; }
+.fa .sect { grid-column: 1 / -1; margin: 22px 0 0; padding-bottom: 6px; border-bottom: 1px solid var(--rule); font-weight: 500; font-size: 1.75rem; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.fa .sect:first-child { margin-top: 0; }
+.fa .sect > span { font-family: var(--serif-sc); color: var(--sepia); font-size: 1.15rem; letter-spacing: .04em; }
+.fa .sect small { font-family: var(--sans); font-size: .82rem; color: var(--ink-3); font-weight: 400; margin-left: auto; }
+.fa .sect small i { font-family: var(--serif); font-size: 1rem; }
+.spec {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  text-decoration: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.fk a.spec { color: var(--ink-2); }
+.spec:hover, .spec:focus-visible { border-color: var(--ink); box-shadow: inset 0 0 0 3px var(--card), inset 0 0 0 4px var(--rule-ink); }
+.spec-no { position: absolute; top: 8px; left: 10px; z-index: 1; font-family: var(--serif-sc); font-weight: 600; font-size: .9rem; letter-spacing: .06em; color: var(--sepia); background: rgba(250, 246, 236, 0.85); padding: 0 5px; }
+.spec-img { display: block; aspect-ratio: 3 / 2; background: var(--paper-2); border-bottom: 1px solid var(--rule-2); overflow: hidden; }
+.spec-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.spec.is-plate .spec-img { background: #efe3c6; }
+.spec.is-plate .spec-img img { object-fit: contain; padding: 6px; mix-blend-mode: multiply; }
+.spec-txt { display: grid; gap: 1px; align-content: start; padding: 12px 14px 8px; }
+.spec-txt b { font-family: var(--serif); font-weight: 600; font-size: 1.45rem; line-height: 1.1; color: var(--ink); }
+.binom { font-size: .84rem; color: var(--ink-3); }
+.binom i { font-family: var(--serif); font-size: 1.1rem; color: var(--ink-2); }
+.spec-txt .fam { font-family: var(--serif-sc); font-weight: 600; font-size: .92rem; letter-spacing: .05em; color: var(--olive); }
+.spec-txt .kort { font-size: .9rem; margin-top: 6px; }
+.fa-flag { justify-self: start; margin-top: 6px; font: 600 .66rem/1.4 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--rubric); border: 1px solid var(--rubric); padding: 1px 6px; border-radius: 2px; }
+.spec .credit { padding: 0 14px 10px; font-size: .7rem; line-height: 1.35; color: var(--ink-3); }
+
+/* Ruten med én art */
+.fa-dlg {
+  width: min(880px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--card);
+  color: var(--ink-2);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 0 0 4px var(--card), 0 0 0 5px var(--rule-ink), 0 24px 60px rgba(33, 27, 20, 0.25);
+}
+.fa-dlg::backdrop { background: rgba(33, 27, 20, 0.45); }
+.fa-dlg-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--rule); }
+.fa-dlg-bar .note { font-variant-numeric: tabular-nums; }
+.fa-dlg .fa-close { margin-left: auto; }
+.fa-dlg article { display: grid; gap: 14px; padding: 20px 24px 26px; }
+.dlg-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.dlg-pic img { border: 1px solid var(--rule); }
+.dlg-pic.is-plate img { background: #efe3c6; }
+.dlg-id h2 { font-size: 2.6rem; font-weight: 500; line-height: 1; margin: 2px 0 4px; }
+.binom.big { font-size: .95rem; }
+.binom.big i { font-size: 1.35rem; }
+/* Museumsetiketten */
+.label { margin: 14px 0 0; display: grid; border: 1px solid var(--ink); padding: 8px 12px; background: #fcf9f1; box-shadow: inset 0 0 0 3px #fcf9f1, inset 0 0 0 4px var(--rule); }
+.label > div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; padding: 3px 0; border-bottom: 1px dotted var(--rule); }
+.label > div:last-child { border-bottom: 0; }
+.label dt { font-family: var(--serif-sc); font-weight: 600; letter-spacing: .05em; color: var(--sepia); }
+.label dd { margin: 0; font-family: var(--serif); font-size: 1.12rem; color: var(--ink); }
+.fa .fa-kort { font-family: var(--serif); font-size: 1.25rem; line-height: 1.4; color: var(--ink); }
+.fa-merk, .fa-warn { padding: 8px 12px; font-size: .94rem; }
+.fa-merk { border-left: 3px solid var(--sepia); background: rgba(138, 95, 54, 0.08); }
+.fa-warn { border-left: 3px solid var(--rubric); background: var(--rubric-soft); color: var(--rubric); font-weight: 600; }
+.fa-facts { margin: 0; display: grid; border-top: 1px solid var(--ink); }
+.fa-facts > div { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 2px 16px; padding: 9px 0; border-bottom: 1px solid var(--rule-2); }
+.fa-facts dt { font-family: var(--serif-sc); font-weight: 600; font-size: 1.02rem; letter-spacing: .04em; color: var(--sepia); }
+.fa-facts dd { margin: 0; font-size: .96rem; }
+.fa .smap { margin-bottom: 4px; }
+.fa .smap .cell { cursor: default; }
+.fa-cols { display: grid; gap: 10px 22px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.fa-cols ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: .95rem; }
+.fa-cols .note { font-size: .86rem; }
+.dlg-alt { max-width: 320px; justify-self: end; }
+.dlg-alt img { border: 1px solid var(--rule); max-height: 200px; object-fit: contain; }
+.dlg-alt.is-plate img { background: #efe3c6; }
+.fa-src { border-top: 1px solid var(--rule); padding-top: 10px; }
+
+@media (max-width: 760px) {
+  .dlg-top { grid-template-columns: minmax(0, 1fr); }
+  .dlg-alt { justify-self: start; }
+}
+@media (max-width: 560px) {
+  .fa-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .spec-txt { padding: 10px 10px 6px; }
+  .spec-txt b { font-size: 1.2rem; }
+  .spec-txt .kort { display: none; }
+  .spec .credit { padding: 0 10px 8px; }
+  .fa-dlg { width: 100vw; max-width: 100vw; max-height: 100dvh; margin: auto 0 0; border-width: 1px 0 0; box-shadow: none; }
+  .fa-dlg article { padding: 16px 16px 26px; }
+  .fa-facts > div { grid-template-columns: minmax(0, 1fr); }
+  .fa .smap { grid-template-columns: 62px repeat(12, minmax(0, 1fr)); }
+  .dlg-id h2 { font-size: 2.1rem; }
+}

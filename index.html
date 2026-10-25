@@ -3,179 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1c0f05">
-<meta name="description" content="Gutta sin hjemmebane: kasino med blackjack, rulett, poker og Meyer mot AI, pluss drikkeregler, ølratinger, Ølsnake og fiskekalender for Trondheimsfjorden.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
-<title>GUTTA — Fest, Fyll & Fanteri 🍺</title>
-<link rel="stylesheet" href="css/style.css">
+<meta name="theme-color" content="#fafaf9">
+<meta name="description" content="Velg mellom Gutta (kasino, fest og ratinger) og Fiske (fiskekalender, arter og kart for Trondheimsfjorden).">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='26' fill='none' stroke='%230b0b0c' stroke-width='3'/><circle cx='32' cy='32' r='6' fill='%230b0b0c'/></svg>">
+<title>detfunkernok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #fafaf9;
+    --panel: #ffffff;
+    --ink: #0b0b0c;
+    --ink-2: #3f3f46;
+    --muted: #71717a;
+    --line: #e4e4e7;
+    --line-2: #d4d4d8;
+    --accent: #3b5bfd;
+    --live: #16a34a;
+    --sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --gutter: clamp(16px, 4vw, 48px);
+    color-scheme: light;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, rgba(11, 11, 12, 0.07) 1px, transparent 0);
+    background-size: 28px 28px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .mono { font-family: var(--mono); font-weight: 400; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px var(--gutter); border-bottom: 1px solid var(--line); background: rgba(250, 250, 249, 0.8); backdrop-filter: blur(8px); }
+  .logo { font-weight: 500; font-size: 1.05rem; letter-spacing: -.01em; display: inline-flex; align-items: center; gap: 10px; }
+  .logo i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--ink); }
+  .clock { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+  .clock b { color: var(--ink); font-weight: 500; }
+
+  main { width: 100%; max-width: 1280px; margin: 0 auto; padding: clamp(36px, 7vh, 88px) var(--gutter) 48px; display: grid; gap: clamp(28px, 5vh, 56px); align-content: start; }
+  .intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px 32px; }
+  .kicker { color: var(--muted); margin: 0 0 18px; }
+  h1 { margin: 0; font-weight: 200; font-size: clamp(3.2rem, 11vw, 8.5rem); line-height: .9; letter-spacing: -.055em; }
+  h1 span { color: var(--muted); }
+  .intro p.sub { margin: 0; max-width: 30ch; color: var(--ink-2); font-size: 1.05rem; line-height: 1.5; }
+
+  .doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line-2); background: var(--line-2); gap: 1px; }
+  .door { position: relative; background: var(--panel); padding: clamp(22px, 3vw, 36px); display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; min-height: 440px; transition: background .25s ease; overflow: hidden; }
+  .door::before { content: ""; position: absolute; left: 0; top: 0; height: 2px; width: 0; background: var(--ink); transition: width .5s cubic-bezier(.2, .7, .2, 1); }
+  .door:hover::before, .door:focus-within::before { width: 100%; }
+  .door:hover { background: #fdfdfc; }
+  .door-head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+  .door h2 { margin: 0; font-weight: 300; font-size: clamp(2.6rem, 6vw, 4.6rem); line-height: 1; letter-spacing: -.045em; }
+  .door h2 a { text-decoration: none; }
+  .door h2 a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+  .door p.desc { margin: 0; color: var(--ink-2); font-size: 1.05rem; line-height: 1.5; max-width: 30ch; position: relative; z-index: 2; }
+  .art { position: absolute; right: clamp(-40px, -2vw, -10px); bottom: 64px; width: min(44%, 270px); color: var(--ink); opacity: .9; pointer-events: none; }
+  .art svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .sub-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; align-self: end; position: relative; z-index: 2; max-width: 70%; }
+  .sub-links a { display: inline-block; text-decoration: none; padding: 7px 11px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--ink-2); transition: border-color .2s, color .2s, background .2s; }
+  .sub-links a:hover { border-color: var(--ink); color: var(--ink); }
+  .door-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .go { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; font-size: .95rem; white-space: nowrap; }
+  .go svg { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
+  .door:hover .go svg { transform: translateX(6px); }
+  .live { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); min-height: 1em; }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); animation: ping 2.4s infinite; flex: none; }
+  .live:empty { display: none; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); } 80%, 100% { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); } }
+
+  /* Strektegningene: en roterende ring (Gutta) og bølger (Fiske) */
+  .ring { transform-origin: 150px 150px; animation: spin 40s linear infinite; }
+  .ring2 { transform-origin: 150px 150px; animation: spin 70s linear infinite reverse; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .wave { animation: drift 9s ease-in-out infinite alternate; }
+  .wave:nth-child(2) { animation-duration: 11s; } .wave:nth-child(3) { animation-duration: 13s; } .wave:nth-child(4) { animation-duration: 15s; }
+  @keyframes drift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
+
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; padding: 18px var(--gutter) 26px; color: var(--muted); border-top: 1px solid var(--line); }
+
+  @media (max-width: 860px) {
+    .doors { grid-template-columns: minmax(0, 1fr); }
+    .door { min-height: 360px; }
+    .intro { grid-template-columns: minmax(0, 1fr); }
+    .art { width: 40%; opacity: .5; bottom: auto; top: 70px; }
+    .sub-links { max-width: 100%; }
+  }
+  @media (max-width: 520px) {
+    .clock .coord { display: none; }
+    .door { min-height: 0; }
+    .art { top: 26px; width: 120px; right: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
 </head>
 <body>
 
-<div id="site-header"></div>
+<header class="top">
+  <span class="logo"><i aria-hidden="true"></i>detfunkernok</span>
+  <span class="clock mono"><span class="coord">63.4305° N · 10.3951° Ø · </span>Trondheim <b id="clock">--:--:--</b></span>
+</header>
 
-<main class="page-fade">
-
-  <section class="hero">
-    <h1>🍻 GUTTA.NO 🍻</h1>
-    <p class="tagline">Der kvelden starter med en øl og ender med en historie ingen husker helt riktig. Nå med eget kasino: spill blackjack, poker og Meyer mot AI-gutta, eller rulett mot huset.</p>
-    <div class="hero-actions">
-      <a href="kasino.html" class="btn">🎰 Til kasinoet</a>
-      <a href="hva-skal-vi-na.html" class="btn ghost">🎡 Hva skal vi finne på?</a>
+<main>
+  <section class="intro">
+    <div>
+      <p class="kicker mono">/ 00 — start</p>
+      <h1>Hvor skal<br><span>vi?</span></h1>
     </div>
+    <p class="sub">To sider under samme tak. Velg kvelden med gutta, eller en tur ned til fjorden.</p>
   </section>
 
-  <div class="wallet-strip">
-    <span>🪙 Lommeboka di: <strong id="hubBalance"></strong></span>
-    <a id="hubBonus" href="kasino.html" class="tag"></a>
-  </div>
+  <nav class="doors" aria-label="Velg side">
+    <article class="door">
+      <div class="door-head mono"><span>01</span><span>Kasino · Fest · Ratings</span></div>
+      <h2><a href="gutta/index.html">Gutta</a></h2>
+      <p class="desc">Kasino mot AI-gutta, festverktøy og ratinger av øl og barer. Lekepenger, ingen ekte innsats.</p>
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 300 300" fill="none" stroke="currentColor">
+          <g class="ring"><circle cx="150" cy="150" r="118" stroke-width="1"/>
+            <g><!-- strekene lages av skriptet nederst --></g></g>
+          <g class="ring2"><circle cx="150" cy="150" r="92" stroke-width=".75" stroke-dasharray="2 6"/></g>
+          <circle cx="150" cy="150" r="66" stroke-width="1"/>
+          <circle cx="150" cy="150" r="22" stroke-width="1"/>
+          <circle cx="150" cy="150" r="4" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <ul class="sub-links mono">
+        <li><a href="gutta/kasino.html">Kasino</a></li>
+        <li><a href="gutta/blackjack.html">Blackjack</a></li>
+        <li><a href="gutta/poker.html">Poker</a></li>
+        <li><a href="gutta/meyer.html">Meyer</a></li>
+        <li><a href="gutta/hva-skal-vi-na.html">Hva skal vi nå?</a></li>
+        <li><a href="gutta/ol-ratings.html">Øl</a></li>
+      </ul>
+      <div class="door-foot"><span class="mono" style="color:var(--muted)">gutta/</span><span class="go">Gå inn <svg width="26" height="12" viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 6h24M19 1l5 5-5 5"/></svg></span></div>
+    </article>
 
-  <h2 class="section-title">🎰 Kasinoet <small>Mot AI-er på tre nivåer · Gutta-kroner er lekepenger</small></h2>
-  <section class="grid">
-    <a class="card" href="blackjack.html">
-      <div class="icon">🃏</div>
-      <h3>Blackjack</h3>
-      <p>Slå dealeren med AI-gutta rundt bordet. Strategitips, korttelling og turneringer på 10 runder.</p>
-      <div class="tags"><span class="tag">Mot AI</span><span class="tag">Lett · Middels · Vanskelig</span><span class="tag green">Turnering</span></div>
-    </a>
-    <a class="card" href="rulett.html">
-      <div class="icon">🔴</div>
-      <h3>Rulett</h3>
-      <p>Deg mot huset. Europeisk eller amerikansk hjul med ekte kulefysikk. Sats på tall, farger, splitter og hjørner.</p>
-      <div class="tags"><span class="tag">Mot huset</span><span class="tag">Lett · Middels · Vanskelig</span></div>
-    </a>
-    <a class="card" href="poker.html">
-      <div class="icon">♠️</div>
-      <h3>Poker</h3>
-      <p>Texas Hold'em mot opptil fem AI-spillere som regner odds, bløffer og husker hvordan du spiller.</p>
-      <div class="tags"><span class="tag">Mot AI</span><span class="tag">Lett · Middels · Vanskelig</span><span class="tag green">Sit &amp; Go</span></div>
-    </a>
-    <a class="card" href="meyer.html">
-      <div class="icon">🎲</div>
-      <h3>Meyer</h3>
-      <p>Bløffespillet med to terninger og et beger. Lyv, avslør løgnere og pass på livene dine.</p>
-      <div class="tags"><span class="tag">Mot AI</span><span class="tag">Bløff</span><span class="tag red">Drikkespill</span></div>
-    </a>
-    <a class="card" href="olautomat.html">
-      <div class="icon">🎰</div>
-      <h3>Ølautomaten</h3>
-      <p>Enarmet banditt med ølkrus, pølser og gratisspinn. Velg hvor vill volatiliteten skal være.</p>
-      <div class="tags"><span class="tag">3 volatiliteter</span><span class="tag green">Gratisspinn</span></div>
-    </a>
-    <a class="card" href="kasino.html">
-      <div class="icon">🪙</div>
-      <h3>Kasino-lobby</h3>
-      <p>Daglig bonushjul, statistikk, prestasjoner og Drikkemodus. Her henter du også mammalån når lommeboka er tom.</p>
-      <div class="tags"><span class="tag">Daglig bonus</span><span class="tag">Prestasjoner</span></div>
-    </a>
-  </section>
-
-  <h2 class="section-title">🍻 Fest &amp; moro</h2>
-  <section class="grid">
-    <a class="card" href="hva-skal-vi-na.html">
-      <div class="icon">🎡</div>
-      <h3>Hva skal vi nå?</h3>
-      <p>Kjeder dere? Spinn hjulet og la skjebnen (og noen få øl) bestemme kveldens neste galskap.</p>
-    </a>
-    <a class="card" href="drikkeregler.html">
-      <div class="icon">📜</div>
-      <h3>Drikkeregler</h3>
-      <p>Egendefinerte, hjemmelagde drikkeregler. Garantert kaos, garantert dagen derpå-anger.</p>
-    </a>
-    <a class="card" href="sjekkereplikk.html">
-      <div class="icon">💬</div>
-      <h3>Sjekkereplikk Generator</h3>
-      <p>Trykk terningen. Få en replikk. Angre umiddelbart. Bruk den likevel.</p>
-    </a>
-    <a class="card" href="olsnake.html">
-      <div class="icon">🐍</div>
-      <h3>Ølsnake</h3>
-      <p>Klassisk Snake, men fyren blir fyllere for hver øl. Hver øl gir 5 GK i lommeboka.</p>
-    </a>
-    <a class="card" href="lyd-bilder.html">
-      <div class="icon">📸</div>
-      <h3>Lyd &amp; Bilder</h3>
-      <p>Promper, ølklink og rampete minner. Hele lydbiblioteket til gutta samlet på ett sted.</p>
-    </a>
-  </section>
-
-  <h2 class="section-title">⭐ Ratings</h2>
-  <section class="grid">
-    <a class="card" href="ol-ratings.html">
-      <div class="icon">🍺</div>
-      <h3>Øl Ratings</h3>
-      <p>Rangér ølen du drikker akkurat nå. Vitenskap, egentlig.</p>
-    </a>
-    <a class="card" href="bar-ratinger.html">
-      <div class="icon">🏙️</div>
-      <h3>Bar Ratinger</h3>
-      <p>Beste (og verste) utesteder i Oslo og Trondheim, rangert av folk som definitivt husker kvelden riktig.</p>
-    </a>
-  </section>
-
-  <h2 class="section-title">🎣 Ute <small>Trondheimsfjorden fra land · vær fra Yr</small></h2>
-  <section class="grid">
-    <a class="card" href="fiskekalender.html">
-      <div class="icon">🎣</div>
-      <h3>Fiskekalender</h3>
-      <p>Hva biter i Trondheimsfjorden akkurat nå? Sesong, lys, tidevann og været fra Yr gir poeng til sju fiskemåter, med utstyr, plasser og regler.</p>
-      <div class="tags"><span class="tag green" id="hubFish">🎣 Regner ut …</span><span class="tag" id="hubFishWx" style="text-transform:none" hidden></span></div>
-    </a>
-  </section>
-
-  <section style="text-align:center; margin-top:60px;">
-    <h2 style="color:var(--amber);">Kveldens visdomsord</h2>
-    <p id="quoteBox" style="font-size:1.25rem; font-style:italic; max-width:600px; margin:0 auto; line-height:1.5;"></p>
-    <button class="btn small" onclick="newQuote()" style="margin-top:16px;">🔄 Nytt visdomsord</button>
-  </section>
-
+    <article class="door">
+      <div class="door-head mono"><span>02</span><span>Trondheimsfjorden fra land</span></div>
+      <h2><a href="fiske/index.html">Fiske</a></h2>
+      <p class="desc">Hva biter nå, hvor og med hva. Poeng fra vær, tidevann og sesong, 30 arter og kart over plassene.</p>
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 300 300" fill="none" stroke="currentColor" stroke-width="1">
+          <g>
+            <path class="wave" d="M-20 110 C 30 90, 80 130, 130 110 S 230 90, 320 110"/>
+            <path class="wave" d="M-20 150 C 30 130, 80 170, 130 150 S 230 130, 320 150"/>
+            <path class="wave" d="M-20 190 C 30 170, 80 210, 130 190 S 230 170, 320 190"/>
+            <path class="wave" d="M-20 230 C 30 210, 80 250, 130 230 S 230 210, 320 230"/>
+          </g>
+          <path d="M96 160c22-26 56-36 86-24l26-18-6 40 6 40-26-18c-30 12-64 2-86-20z" fill="var(--panel)" stroke-width="1.25"/>
+          <circle cx="122" cy="156" r="3" fill="currentColor" stroke="none"/>
+          <path d="M150 60v64" stroke-dasharray="3 4"/><path d="M150 124c0 8 8 10 12 6" stroke-width="1.25"/>
+        </svg>
+      </div>
+      <ul class="sub-links mono">
+        <li><a href="fiske/kalender.html">Kalender</a></li>
+        <li><a href="fiske/arter.html">Artene</a></li>
+        <li><a href="fiske/kart.html">Kart</a></li>
+        <li><a href="fiske/kalender.html#ordliste">Ordliste</a></li>
+      </ul>
+      <div class="door-foot"><span class="live mono" id="fishLive"></span><span class="go">Gå inn <svg width="26" height="12" viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 6h24M19 1l5 5-5 5"/></svg></span></div>
+    </article>
+  </nav>
 </main>
 
-<footer>
-  <p>🍺 GUTTA.NO — laget med <span class="heart">♥</span>, tømmermenn og altfor dårlige idéer. Drikk ansvarlig, feir vilt.</p>
+<footer class="mono">
+  <span>detfunkernok · statisk side</span>
+  <span>Vær: MET Norway · Tidevann og kart: Kartverket</span>
 </footer>
 
-<script src="js/common.js"></script>
-<script src="js/fiskemodell.js"></script>
+<script src="fiske/js/felles.js"></script>
+<script src="fiske/js/fiskemodell.js"></script>
 <script>
-  const quotes = [
-    "\"En øl om dagen holder legen unna. To øl om dagen holder alle unna.\" – Ukjent gutta-filosof",
-    "\"Det er ikke fylla som er problemet, det er gravitasjonen.\" – Anonym på fest",
-    "\"Jeg drikker ikke for å glemme, jeg drikker for å huske hvor gøy dette er.\" – Onkel på 17. mai",
-    "\"Shots er bare vitaminer for viljestyrken.\" – Klok mann, sikkert",
-    "\"I morgen er i morgen sitt problem.\" – Fredagsversjonen av deg",
-    "\"Alt er lov før midnatt.\" – Gutta-loven §1",
-    "\"En god fest trenger ingen unnskyldning, bare is i fryseren.\" – Bartender med erfaring",
-    "\"Huset vinner alltid. Unntatt når gutta teller kort.\" – Kasino-Kjetil",
-    "\"Jeg bløffet ikke, jeg var bare optimistisk.\" – Meyer-taper, 02:14"
-  ];
-  function newQuote() {
-    document.getElementById('quoteBox').textContent = quotes[Math.floor(Math.random() * quotes.length)];
-  }
-  newQuote();
+  // Klokka i Trondheim.
+  const clock = document.getElementById('clock');
+  const tick = () => { clock.textContent = new Date().toLocaleTimeString('nb-NO', {timeZone: 'Europe/Oslo', hour12: false}); };
+  tick(); setInterval(tick, 1000);
 
-  function paintWallet() {
-    document.getElementById('hubBalance').textContent = formatGK(Wallet.balance);
-    const bonus = document.getElementById('hubBonus');
-    if (Wallet.bonusAvailable()) bonus.textContent = '🎁 Daglig bonus venter i lobbyen';
-    else if (Wallet.canBorrow()) bonus.textContent = '🪫 Blakk? Ta et mammalån i lobbyen';
-    else bonus.textContent = '🎰 Til kasinoet';
-  }
-  paintWallet();
-  document.addEventListener('gutta:wallet', paintWallet);
+  // Tolv streker rundt ringen, som på et roulettehjul.
+  const g = document.querySelector('.ring g');
+  g.innerHTML = Array.from({length: 12}, (_, i) => {
+    const a = i * Math.PI / 6, x1 = 150 + 112 * Math.sin(a), y1 = 150 - 112 * Math.cos(a), x2 = 150 + 124 * Math.sin(a), y2 = 150 - 124 * Math.cos(a);
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke-width="${i % 3 ? 1 : 3}"/>`;
+  }).join('');
 
-  // Fiskekalenderen sin beste anbefaling akkurat nå, med været fra Yr når det er hentet.
-  function paintFish() {
-    const n = osloNow(), wx = FiskeVaer.wxAt(toUTC(n.y, n.m, n.d, n.h));
-    FiskeVaer.loadTide(n.y, n.m);
-    const top = rankOptions(makeCtx(n.y, n.m, n.d, n.h, wx))[0];
-    document.getElementById('hubFish').textContent = '🎣 Best nå: ' + top.opt.kort + (top.spot ? ' ved ' + top.spot.kort : '') + ' · ' + top.score + '/100';
-    const tag = document.getElementById('hubFishWx');
-    tag.hidden = !wx;
-    if (wx) tag.textContent = wxIcon(wx) + ' ' + wx.temp + ' °C · ' + fmtNum(wx.wind) + ' m/s';
+  // Det fiskekalenderen anbefaler akkurat nå, med været fra Yr når det er hentet.
+  function paintFish(){
+    try {
+      const n = osloNow(), wx = FiskeVaer.wxAt(toUTC(n.y, n.m, n.d, n.h));
+      FiskeVaer.loadTide(n.y, n.m);
+      const top = rankOptions(makeCtx(n.y, n.m, n.d, n.h, wx))[0];
+      document.getElementById('fishLive').innerHTML = '<i></i>Nå: ' + top.opt.kort + (top.spot ? ' ved ' + top.spot.kort : '') + ' · ' + top.score;
+    } catch (e) { /* uten modellen vises bare lenkene */ }
   }
-  paintFish();
-  FiskeVaer.onChange(paintFish);
-  FiskeVaer.load();
+  if (typeof FiskeVaer !== 'undefined'){ paintFish(); FiskeVaer.onChange(paintFish); FiskeVaer.load(); }
 </script>
 </body>
 </html>
