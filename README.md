@@ -21,9 +21,36 @@ nettleseren (Web Audio API), og det finnes ingen lyd- eller bildefiler.
 
 ## Fiskekalenderen
 
-Siden gir poeng fra 0 til 100 til sju fiskemåter ut fra sesong, lys (solhøyden), tidevann (månefasen) og vær.
-Du velger dag og klokkeslett, og «Fiskeplassene» rangerer alle plassene i Trondheim for det tidspunktet, med hva du
-bør fiske med der og hvilke arter du kan få.
+Siden gir poeng fra 0 til 100 til sju fiskemåter. Poengene er bygget som habitatmodellene i fiskeforskningen
+(HSI): hver faktor blir et tall fra 0 til 1, og faktorene ganges sammen.
+
+```
+Poeng = 100 × Sesong × Lys × Strøm × Vær × Vind × Bestand
+```
+
+- **Sesong**: månedskalenderen fra fiskeguiden, flyttet etter om sjøtemperaturen er høyere eller lavere enn vanlig.
+- **Lys**: solhøyden, glidende fra dagslys til natt. Skyer gjør det mørkere.
+- **Strøm**: hvor fort sjøen stiger eller faller, regnet ut fra flo og fjære hos Kartverket.
+- **Vær**: nedbør og sterk kulde.
+- **Vind**: hvor vanskelig det er å kaste og holde kontakt med redskapen.
+- **Bestand**: trekker ned sjøørret.
+
+Lys, strøm og vær vektes ulikt for hver fiskemåte (et vektet geometrisk snitt). Uten varsel brukes vinden målt på
+Trondheim – Voll 1991–2020, og uten tidevannstabell snittet over en hel tidevannssyklus, så dager med og uten varsel
+kan sammenlignes. «Vanlig» sjøtemperatur er snittet fra MET sin havmodell NorKyst800 utenfor Brattøra 2017–2025.
+
+**Plassene** er de seks TOFA beskriver i Trondheim. For hver plass er posisjonen funnet i sjøkartet, og åpent vann i
+36 retninger og dybden innen kastavstand er målt i Kartverket sine dybdedata. Med vindretning fra Yr regnes
+bølgehøyden ut (Coastal Engineering Manual), og plassene i munningsfredningssonene utenfor Nidelva er merket ut fra
+sonekartet til Statsforvalteren. Hele Pir I kan brukes, så der er hver side målt for seg. Sjøtemperaturen hentes for
+hver plass fra havvarselet til MET, i modellruta (800 m) nærmest plassen.
+I «Planlegg turen» velger du dag, tid, plass, fiskemåte og stang (kastevekt), eller lar siden velge det beste
+(«Beste dag» leter gjennom de neste sju dagene). Det som ikke passer valgene, for eksempel en stang som ikke tåler
+søkket plassen trenger, vises med en advarsel, men velges aldri som best. Valgene står i adressen, «Del planen» lager
+en lenke til selve planen, og stanga huskes i nettleseren. Kartet (Kartverket, via Leaflet) viser plassene farget
+etter poengene, og du kan trykke på en plass for å velge den.
+«Fiskeplassene» rangerer alle plassene i Trondheim for tidspunktet, med hva du bør fiske med der og hvilke arter
+du kan få.
 Den henter tre ting rett fra nettleseren, uten nøkkel eller server:
 
 - **Timesvarsel fra Yr** (MET Norway, `api.met.no/weatherapi/locationforecast`): vind, skyer, nedbør og temperatur

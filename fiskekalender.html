@@ -9,6 +9,7 @@
 <title>Fiskekalender — GUTTA</title>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/fiskekalender.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 </head>
 <body>
 
@@ -25,13 +26,19 @@
     <aside class="controls stack" id="controls">
       <section class="fk-card" id="timeCard">
         <div class="cardhead">
-          <h2>Når vil du fiske?</h2>
+          <h2>Planlegg turen</h2>
           <button class="fk-btn primary" id="btnNow" type="button">Nå</button>
         </div>
+        <p class="note" style="margin-bottom:10px">Velg det du vil bestemme selv. «Beste» lar siden finne det som passer best.</p>
+        <p class="plansum" id="planSum" aria-live="polite"></p>
         <div class="when">
-          <div class="chips" id="dayChips" role="group" aria-label="Dag"></div>
-          <label class="datepick" for="datePick">Eller velg en dato <input type="date" id="datePick"></label>
-          <div class="chips" id="timeChips" role="group" aria-label="Tid på døgnet"></div>
+          <div class="pick"><span class="lbl">Dag</span>
+            <div class="chips" id="dayChips" role="group" aria-label="Dag"></div>
+            <label class="datepick" for="datePick">Eller velg en dato <input type="date" id="datePick"></label>
+          </div>
+          <div class="pick"><span class="lbl">Tid</span>
+            <div class="chips" id="timeChips" role="group" aria-label="Tid på døgnet"></div>
+          </div>
         </div>
         <p class="note" id="timeLabel"></p>
         <div class="tl">
@@ -49,6 +56,28 @@
         </div>
         <div class="legend" id="legend" aria-hidden="true"></div>
         <p class="note" id="curveNote" style="margin-top:8px"></p>
+        <div class="when picks2">
+          <div class="pick"><span class="lbl">Plass</span>
+            <div class="chips" id="spotChips" role="group" aria-label="Plass"></div>
+          </div>
+          <div class="pick"><span class="lbl">Fiskemåte</span>
+            <div class="chips" id="methodChips" role="group" aria-label="Fiskemåte"></div>
+          </div>
+          <div class="pick"><span class="lbl">Stang</span>
+            <div class="chips" id="rodChips" role="group" aria-label="Stang"></div>
+            <div class="gearrow" id="gearRow">
+              <label for="gMin">Kastevekt</label>
+              <input type="number" id="gMin" min="1" max="500" step="1" inputmode="numeric" aria-label="Kastevekt fra (gram)">
+              <span>til</span>
+              <input type="number" id="gMax" min="1" max="500" step="1" inputmode="numeric" aria-label="Kastevekt til (gram)">
+              <span>g</span>
+            </div>
+          </div>
+        </div>
+        <div class="share">
+          <button class="fk-btn" id="btnShare" type="button">Del planen</button>
+          <span class="note" id="shareNote" aria-live="polite"></span>
+        </div>
       </section>
 
       <section class="fk-card">
@@ -98,12 +127,13 @@
       <section class="fk-card" id="plasser">
         <div class="cardhead"><h2>Fiskeplassene</h2></div>
         <p class="note" id="spotWhen" style="margin-bottom:12px"></p>
+        <div class="spotmap" id="spotMap" role="region" aria-label="Kart over fiskeplassene"></div>
         <div class="spotlist" id="spotList"></div>
       </section>
 
       <section class="fk-card">
         <div class="cardhead"><h2>Alle alternativer</h2></div>
-        <p class="note" style="margin-bottom:12px">Sortert etter poeng for valgt dag og tidspunkt. Åpne et alternativ for å se fordeler, ulemper, steder og hvorfor det får poengene det får.</p>
+        <p class="note" id="optNote" style="margin-bottom:12px">Sortert etter poeng for valgt dag og tidspunkt.</p>
         <div class="optlist" id="optlist"></div>
       </section>
 
@@ -150,6 +180,7 @@
 </footer>
 
 <script src="js/common.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="js/fiskemodell.js"></script>
 <script src="js/fiskekalender.js"></script>
 </body>

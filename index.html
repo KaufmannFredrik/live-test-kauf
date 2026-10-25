@@ -166,8 +166,9 @@
   // Fiskekalenderen sin beste anbefaling akkurat nå, med været fra Yr når det er hentet.
   function paintFish() {
     const n = osloNow(), wx = FiskeVaer.wxAt(toUTC(n.y, n.m, n.d, n.h));
+    FiskeVaer.loadTide(n.y, n.m);
     const top = rankOptions(makeCtx(n.y, n.m, n.d, n.h, wx))[0];
-    document.getElementById('hubFish').textContent = '🎣 Best nå: ' + top.opt.kort + ' · ' + top.score + '/100';
+    document.getElementById('hubFish').textContent = '🎣 Best nå: ' + top.opt.kort + (top.spot ? ' ved ' + top.spot.kort : '') + ' · ' + top.score + '/100';
     const tag = document.getElementById('hubFishWx');
     tag.hidden = !wx;
     if (wx) tag.textContent = wxIcon(wx) + ' ' + wx.temp + ' °C · ' + fmtNum(wx.wind) + ' m/s';

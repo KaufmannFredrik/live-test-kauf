@@ -147,6 +147,30 @@
 .datepick input:hover { border-color: var(--amber); }
 .chip.best:not([aria-pressed="true"]) { color: var(--beer-gold); border-color: var(--beer-gold); border-style: dashed; }
 
+/* Planlegg turen: ett valg per rad, «Beste» først */
+.pick { display: grid; gap: 6px; }
+.pick > .lbl { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--beer-gold); font-weight: 700; }
+.picks2 { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.chip.warn { border-style: dashed; opacity: .75; }
+.gearrow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: .86rem; color: var(--ink2); }
+.gearrow label { font-weight: 600; color: var(--foam); }
+.gearrow input {
+  width: 4.6em;
+  font: inherit;
+  color: var(--foam);
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(244, 168, 37, 0.4);
+  border-radius: 10px;
+  padding: 2px 8px;
+  min-height: 32px;
+  font-variant-numeric: tabular-nums;
+}
+.gearrow input:hover, .gearrow input:focus { border-color: var(--amber); outline: none; }
+.share { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.plansum { margin-bottom: 14px; padding: 8px 12px; border-radius: 12px; border: 2px solid var(--amber); background: var(--accent-soft); font-size: .9rem; }
+.plansum b { color: var(--beer-gold); }
+.plansum a { font-weight: 600; white-space: nowrap; }
+
 /* Tidslinje */
 .tl { padding: 0 9px; margin-top: 8px; }
 .tl-wx { position: relative; height: 36px; margin-bottom: 2px; }
@@ -222,6 +246,12 @@ details[open] > summary .chev { transform: rotate(225deg); }
 .must { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; background: var(--beer-gold); color: var(--brown-dark); padding: 1px 7px; border-radius: 50px; margin-left: 6px; font-weight: 700; white-space: nowrap; }
 .next { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 14px; color: var(--ink2); font-size: .88rem; }
 .next b { color: var(--beer-gold); }
+.where { font-size: 1.05rem; margin-top: 2px; }
+.where b { color: var(--beer-gold); }
+.picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.picked span { font-size: .74rem; letter-spacing: .04em; padding: 1px 9px; border-radius: 50px; border: 1px dashed var(--beer-gold); color: var(--beer-gold); }
+.issues { display: grid; gap: 6px; margin: 0 0 14px; }
+.issues p { padding: 8px 12px; border-radius: 10px; border: 2px solid var(--amber); background: rgba(244, 168, 37, 0.1); font-size: .9rem; }
 
 /* Fiskeplassene */
 #plasser { scroll-margin-top: calc(var(--header-h) + 16px); }
@@ -229,6 +259,16 @@ details[open] > summary .chev { transform: rotate(225deg); }
 .spot { display: grid; gap: 10px; align-content: start; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface2); min-width: 0; }
 .spot.top { border: 2px solid var(--amber); background: linear-gradient(160deg, rgba(244, 168, 37, 0.15), rgba(0, 0, 0, 0.22)); }
 .spot.off { opacity: .72; }
+.spot.sel { outline: 3px solid var(--beer-gold); outline-offset: 2px; opacity: 1; }
+.spot-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.spot-actions .chip { min-height: 30px; font-size: .8rem; }
+.spotmap { height: 280px; border-radius: 14px; border: 1px solid var(--line); margin-bottom: 14px; overflow: hidden; background: var(--surface2); }
+.spotmap:empty, .spotmap.none { display: none; }
+.fk .leaflet-container { font: inherit; background: #1b1209; }
+.fk .leaflet-tooltip { background: var(--brown-dark); color: var(--foam); border: 1px solid var(--amber); font-size: .8rem; box-shadow: none; }
+.fk .leaflet-tooltip-top::before { border-top-color: var(--amber); }
+.fk .leaflet-control-attribution { background: rgba(28, 15, 5, 0.75); color: var(--ink2); }
+.fk .leaflet-control-attribution a { color: var(--beer-gold); }
 .spot-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .spot-name { display: grid; gap: 5px; justify-items: start; min-width: 0; }
 .fk .spot h3 { font-size: 1.3rem; }
